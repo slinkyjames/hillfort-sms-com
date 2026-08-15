@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hillfort International School - Monorepo Launcher</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              'brand-navy': '#0A192F',
+              'brand-gold': '#D4AF37',
+              'brand-maroon': '#800020',
+            }
+          }
+        }
+      }
+    </script>
+  </head>
+  <body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col justify-between">
+    <header class="bg-brand-navy text-white shadow-md">
+      <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 bg-brand-gold rounded-lg flex items-center justify-center font-bold text-brand-navy text-xl shadow">
+            H
+          </div>
+          <div>
+            <span class="font-bold text-xl tracking-wide block text-white">Hillfort International School</span>
+            <span class="text-xs text-brand-gold font-medium tracking-widest uppercase">Monorepo Workspace Hub</span>
+          </div>
+        </div>
+        <span class="text-xs bg-slate-800 text-slate-300 px-3 py-1.5 rounded-full">
+          Environment: Development
+        </span>
+      </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-6 py-16 w-full space-y-12">
+      <div class="text-center space-y-4">
+        <h1 class="text-3xl md:text-5xl font-extrabold text-brand-navy">
+          System Applications Directory
+        </h1>
+        <p class="text-slate-600 max-w-2xl mx-auto text-sm md:text-base leading-relaxed">
+          Welcome to the Hillfort International School management system workspace. Select an application below to launch its interface.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <!-- Public Website -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 flex flex-col justify-between space-y-6 hover:shadow-md transition-shadow">
+          <div class="space-y-3">
+            <div class="w-12 h-12 bg-brand-navy/10 text-brand-navy font-bold rounded-xl flex items-center justify-center text-xl">
+              🌐
+            </div>
+            <h2 class="text-xl font-bold text-brand-navy">Public Website</h2>
+            <p class="text-sm text-slate-600 leading-relaxed">
+              Marketing site, academic programs overview, admissions guidelines, and institutional information.
+            </p>
+          </div>
+          <a 
+            href="http://localhost:5173" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            class="block w-full py-3 bg-brand-navy text-white text-center text-sm font-bold rounded-xl shadow hover:bg-brand-navy/90 transition-colors"
+          >
+            Launch Public Site →
+          </a>
+        </div>
+
+        <!-- Parent & Student Portal -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 flex flex-col justify-between space-y-6 hover:shadow-md transition-shadow">
+          <div class="space-y-3">
+            <div class="w-12 h-12 bg-brand-gold/10 text-brand-navy font-bold rounded-xl flex items-center justify-center text-xl">
+              🎓
+            </div>
+            <h2 class="text-xl font-bold text-brand-navy">Parent / Student Portal</h2>
+            <p class="text-sm text-slate-600 leading-relaxed">
+              Access term report cards, fee payment statements, attendance logs, and student profiles.
+            </p>
+          </div>
+          <a 
+            href="http://localhost:5174" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            class="block w-full py-3 bg-brand-gold text-brand-navy text-center text-sm font-bold rounded-xl shadow hover:bg-[#c28f15] transition-colors"
+          >
+            Launch Portal →
+          </a>
+        </div>
+
+        <!-- Admin Dashboard -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 flex flex-col justify-between space-y-6 hover:shadow-md transition-shadow">
+          <div class="space-y-3">
+            <div class="w-12 h-12 bg-brand-maroon/10 text-brand-maroon font-bold rounded-xl flex items-center justify-center text-xl">
+              🛡️
+            </div>
+            <h2 class="text-xl font-bold text-brand-navy">Admin Dashboard</h2>
+            <p class="text-sm text-slate-600 leading-relaxed">
+              Administrative control center for student management, staff records, curriculum mapping, and billing.
+            </p>
+          </div>
+          <a 
+            href="http://localhost:5175" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            class="block w-full py-3 bg-brand-maroon text-white text-center text-sm font-bold rounded-xl shadow hover:bg-[#660000] transition-colors"
+          >
+            Launch Admin →
+          </a>
+        </div>
+      </div>
+    </main>
+
+    <footer class="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-500">
+      Hillfort International School Management System • Monorepo Root Hub
+    </footer>
+  </body>
+</html>
