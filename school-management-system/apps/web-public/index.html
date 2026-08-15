@@ -1,13 +1,1040 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Hillfort International School - Official Website</title>
-  </head>
-  <body class="bg-slate-50 text-slate-900 antialiased">
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hillfort International School - Empowering Minds, Shaping Futures</title>
+    <meta name="description" content="Hillfort International School offers Nigerian/British curriculum with world-class education for students from EYFS to Secondary level.">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Playfair+Display:wght@400;600;700;900&family=Nunito:wght@300;400;600;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/images/favicon-16x16.png">
+    <link rel="manifest" href="assets/images/site.webmanifest">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <div class="container">
+            <div class="top-bar-left">
+                <a href="tel:+2349130267145" class="top-link">
+                    <i class="fas fa-phone"></i> +234 (913) 026-7145
+                </a>
+                <a href="mailto:info@hillfortintlschool.ng" class="top-link">
+                    <i class="fas fa-envelope"></i> info@hillfortintlschool.ng
+                </a>
+            </div>
+            <div class="top-bar-right">
+                <div class="social-links">
+                    <a href="https://facebook.com/hillfort" target="_blank" aria-label="Facebook">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="https://instagram.com/hillfort" target="_blank" aria-label="Instagram">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="https://wa.me/2349130267145" target="_blank" aria-label="WhatsApp">
+                        <i class="fab fa-whatsapp"></i>
+                    </a>
+                    <a href="https://twitter.com/hillfort" target="_blank" aria-label="Twitter">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                </div>
+                <div class="quick-links">
+                    <a href="pages/newsletter.html" class="btn-small"><i class="fas fa-newspaper"></i> Newsletter</a>
+                    <a href="pages/sms.html" class="btn-small" target="_blank" rel="noopener">
+                        <i class="fas fa-sign-in-alt"></i> Login SMS
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Header -->
+    <header class="main-header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo-section">
+                    <img src="assets/images/logo.png" alt="Hillfort International School Logo" class="logo">
+                    <div class="logo-text">
+                        <h1>Hillfort<br>International<br>School</h1>
+                        <p class="tagline">...empowering minds, shaping futures.</p>
+                    </div>
+                </div>
+
+                <nav class="main-nav" id="mainNav">
+                    <button class="nav-toggle" id="navToggle" aria-label="Toggle Navigation">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                    <ul class="nav-menu">
+                        <li class="nav-item"><a href="index.html" class="nav-link nav-home active-page"><i class="fas fa-home"></i> Home</a></li>
+                        <li class="nav-item dropdown">
+                            <a href="#" class="nav-link">About <i class="fas fa-chevron-down"></i></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="pages/our-story.html">Our Story</a></li>
+                                <li><a href="pages/mission-vision.html">Mission &amp; Vision</a></li>
+                                <li><a href="pages/leadership.html">Leadership Team</a></li>
+                                <li><a href="pages/government-approved.html">Government Approved</a></li>
+                                <li><a href="pages/facilities.html">Our Facilities</a></li>
+                                <li><a href="pages/career.html">Careers</a></li>
+                                <li><a href="pages/contact.html">Contact Us</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a href="#" class="nav-link">Academic <i class="fas fa-chevron-down"></i></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="pages/curriculum.html">Nigerian/British Curriculum</a></li>
+                                <li><a href="pages/eyfs.html">Early Years Foundation Stage (EYFS)</a></li>
+                                <li><a href="pages/primary.html">Primary School</a></li>
+                                <li><a href="pages/secondary.html">Secondary School</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a href="#" class="nav-link">Admission <i class="fas fa-chevron-down"></i></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="pages/why-choose-us.html">Why Choose Us</a></li>
+                                <li><a href="pages/admission.html">Admission Process</a></li>
+                                <li><a href="pages/entry-requirements.html">Entry Requirements</a></li>
+                                <li><a href="pages/school-fees.html">School Fees</a></li>
+                                <li><a href="pages/school-tour.html">Book a School Tour</a></li>
+                                <li><a href="pages/apply.html">Apply Online</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a href="pages/school-life.html" class="nav-link">School Life <i class="fas fa-chevron-down"></i></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="pages/co-curricular.html">Co-Curricular Activities</a></li>
+                                <li><a href="pages/sports-clubs.html">Sports &amp; Clubs</a></li>
+                                <li><a href="pages/pastoral-care.html">Pastoral Care</a></li>
+                                <li><a href="pages/student-leadership.html">Student Leadership</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item"><a href="pages/news-events.html" class="nav-link">News &amp; Events</a></li>
+                        <li class="nav-item cta-nav">
+                            <a href="pages/apply.html" class="btn btn-primary">Apply Now</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Slider -->
+    <section class="hero-slider">
+        <div class="slider-container">
+            <!-- Slide 1 -->
+            <div class="slide active">
+                <div class="slide-background" style="background-image: url('assets/images/hero-1.jpg');"></div>
+                <div class="container">
+                    <div class="slide-content">
+                        <div class="slide-content-inner">
+                        <div class="slide-text">
+                            <span class="slide-label">Welcome to Excellence</span>
+                            <h2 class="slide-title">Empowering Minds, Shaping Futures</h2>
+                            <p class="slide-description">
+                                At Hillfort International School, every child is known, supported, and challenged to thrive. 
+                                We combine the Nigerian and British curriculum to provide world-class education.
+                            </p>
+                            <div class="slide-buttons">
+                                <a href="pages/our-story.html" class="btn btn-primary btn-lg">
+                                    Discover Our Story <i class="fas fa-arrow-right"></i>
+                                </a>
+                                <a href="#" class="btn btn-outline btn-lg">
+                                    <i class="fas fa-play-circle"></i> Watch Video
+                                </a>
+                            </div>
+                            <div class="slide-stats">
+                                <div class="stat-item">
+                                    <h3>500+</h3>
+                                    <p>Students</p>
+                                </div>
+                                <div class="stat-item">
+                                    <h3>50+</h3>
+                                    <p>Expert Teachers</p>
+                                </div>
+                                <div class="stat-item">
+                                    <h3>15+</h3>
+                                    <p>Years of Excellence</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slide-image">
+                            <img src="assets/images/students-learning.jpg" alt="Students Learning">
+                            <div class="image-badge">
+                                <i class="fas fa-award"></i>
+                                <span>Government Approved</span>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 2 -->
+            <div class="slide">
+                <div class="slide-background" style="background-image: url('assets/images/hero-2.jpg');"></div>
+                <div class="container">
+                    <div class="slide-content">
+                        <div class="slide-content-inner">
+                        <div class="slide-text">
+                            <span class="slide-label">World-Class Education</span>
+                            <h2 class="slide-title">Nigerian & British Curriculum Combined</h2>
+                            <p class="slide-description">
+                                We offer a unique blend of Nigerian and British educational systems, 
+                                preparing students for both local and international opportunities.
+                            </p>
+                            <div class="slide-buttons">
+                                <a href="#" class="btn btn-primary btn-lg">
+                                    Explore Academic Programs <i class="fas fa-arrow-right"></i>
+                                </a>
+                                <a href="#" class="btn btn-outline btn-lg">
+                                    Download Prospectus
+                                </a>
+                            </div>
+                        </div>
+                        <div class="slide-image">
+                            <img src="assets/images/classroom.jpg" alt="Modern Classroom">
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 3 -->
+            <div class="slide">
+                <div class="slide-background" style="background-image: url('assets/images/hero-3.jpg');"></div>
+                <div class="container">
+                    <div class="slide-content">
+                        <div class="slide-content-inner">
+                        <div class="slide-text">
+                            <span class="slide-label">Join Our Community</span>
+                            <h2 class="slide-title">Admissions Open for <span data-slide-admyear>2026/2027</span></h2>
+                            <p class="slide-description">
+                                We're accepting applications for the new academic year. 
+                                Book a school tour and discover why parents choose Hillfort for their children.
+                            </p>
+                            <div class="slide-buttons">
+                                <a href="pages/apply.html" class="btn btn-primary btn-lg">
+                                    Apply Online Now <i class="fas fa-arrow-right"></i>
+                                </a>
+                                <a href="#" class="btn btn-outline btn-lg">
+                                    Book a Tour
+                                </a>
+                            </div>
+                        </div>
+                        <div class="slide-image">
+                            <img src="assets/images/students-happy.jpg" alt="Happy Students">
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 4: School Week & Theme -->
+            <div class="slide">
+                <div class="slide-background" style="background-image: url('assets/images/hero-4.jpg');"></div>
+                <div class="container">
+                    <div class="slide-content">
+                        <div class="slide-content-inner">
+                        <div class="slide-text">
+                            <span class="slide-label">This Week at Hillfort</span>
+                            <h2 class="slide-title slide-week-title">Week 6 — Second Term</h2>
+                            <div class="week-info-card">
+                                <div class="week-info-item">
+                                    <i class="fas fa-calendar-week"></i>
+                                    <div>
+                                        <h4>School Week</h4>
+                                        <p data-week-detail>Week 6 of 12</p>
+                                    </div>
+                                </div>
+                                <div class="week-info-item">
+                                    <i class="fas fa-lightbulb"></i>
+                                    <div>
+                                        <h4>Theme of the Week</h4>
+                                        <p>"Innovation &amp; Creativity"</p>
+                                    </div>
+                                </div>
+                                <div class="week-info-item">
+                                    <i class="fas fa-book-open"></i>
+                                    <div>
+                                        <h4>Focus Area</h4>
+                                        <p>STEM Projects &amp; Robotics</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="slide-buttons">
+                                <a href="pages/term-calendar.html" class="btn btn-primary btn-lg">
+                                    View Full Calendar <i class="fas fa-calendar"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="slide-image">
+                            <img src="assets/images/week-theme.jpg" alt="This Week">
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 5: Latest Blog Post -->
+            <div class="slide">
+                <div class="slide-background" style="background-image: url('assets/images/hero-5.jpg');"></div>
+                <div class="container">
+                    <div class="slide-content">
+                        <div class="slide-content-inner">
+                        <div class="slide-text">
+                            <span class="slide-label">Latest News</span>
+                            <h2 class="slide-title">Summer School 2025 Registration Open</h2>
+                            <p class="slide-description">
+                                Join us for an exciting summer of learning and fun! Our 2025 summer program 
+                                offers specialized courses in STEM, Arts, Sports, and Language development.
+                            </p>
+                            <div class="post-meta">
+                                <span><i class="far fa-calendar"></i> July 22, 2025</span>
+                                <span><i class="far fa-user"></i> Admin</span>
+                                <span><i class="fas fa-tag"></i> Events</span>
+                            </div>
+                            <div class="slide-buttons">
+                                <a href="#" class="btn btn-primary btn-lg">
+                                    Read Full Article <i class="fas fa-arrow-right"></i>
+                                </a>
+                                <a href="#" class="btn btn-outline btn-lg">
+                                    All News & Events
+                                </a>
+                            </div>
+                        </div>
+                        <div class="slide-image">
+                            <img src="assets/images/summer-school.jpg" alt="Summer School">
+                            <div class="image-badge">
+                                <i class="fas fa-fire"></i>
+                                <span>Featured Post</span>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 6: Photo Gallery Highlight -->
+            <div class="slide">
+                <div class="slide-background" style="background-image: url('assets/images/hero-6.jpg');"></div>
+                <div class="container">
+                    <div class="slide-content">
+                        <div class="slide-content-inner">
+                        <div class="slide-text">
+                            <span class="slide-label">Photo Gallery</span>
+                            <h2 class="slide-title">Ankara Day Celebration 2026</h2>
+                            <p class="slide-description">
+                                Rocking our African prints with pride! Our students celebrated African culture 
+                                with beautiful traditional attire, music, and dance performances.
+                            </p>
+                            <div class="photo-grid">
+                                <div class="photo-item">
+                                    <img src="assets/images/ankara-1.jpg" alt="Ankara Day 1">
+                                </div>
+                                <div class="photo-item">
+                                    <img src="assets/images/ankara-2.jpg" alt="Ankara Day 2">
+                                </div>
+                                <div class="photo-item">
+                                    <img src="assets/images/ankara-3.jpg" alt="Ankara Day 3">
+                                </div>
+                                <div class="photo-item">
+                                    <img src="assets/images/ankara-4.jpg" alt="Ankara Day 4">
+                                </div>
+                            </div>
+                            <div class="slide-buttons">
+                                <a href="#" class="btn btn-primary btn-lg">
+                                    View Full Gallery <i class="fas fa-images"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 7: Instagram Feed -->
+            <div class="slide">
+                <div class="slide-background" style="background-image: url('assets/images/hero-instagram.jpg');"></div>
+                <div class="container">
+                    <div class="slide-content slide-content-instagram">
+                        <div class="instagram-feed-slide">
+                            <div class="instagram-header">
+                                <i class="fab fa-instagram"></i>
+                                <div>
+                                    <h2>Follow Us on Instagram</h2>
+                                    <p>@hillfortinternationslschool</p>
+                                </div>
+                            </div>
+                            
+                            <div class="instagram-grid">
+                                <div class="instagram-post">
+                                    <img src="assets/images/insta-1.jpg" alt="Instagram Post 1">
+                                    <div class="instagram-overlay">
+                                        <i class="fas fa-heart"></i>
+                                        <span>245</span>
+                                        <i class="fas fa-comment"></i>
+                                        <span>32</span>
+                                    </div>
+                                </div>
+                                <div class="instagram-post">
+                                    <img src="assets/images/insta-2.jpg" alt="Instagram Post 2">
+                                    <div class="instagram-overlay">
+                                        <i class="fas fa-heart"></i>
+                                        <span>189</span>
+                                        <i class="fas fa-comment"></i>
+                                        <span>28</span>
+                                    </div>
+                                </div>
+                                <div class="instagram-post">
+                                    <img src="assets/images/insta-3.jpg" alt="Instagram Post 3">
+                                    <div class="instagram-overlay">
+                                        <i class="fas fa-heart"></i>
+                                        <span>312</span>
+                                        <i class="fas fa-comment"></i>
+                                        <span>45</span>
+                                    </div>
+                                </div>
+                                <div class="instagram-post">
+                                    <img src="assets/images/insta-4.jpg" alt="Instagram Post 4">
+                                    <div class="instagram-overlay">
+                                        <i class="fas fa-heart"></i>
+                                        <span>276</span>
+                                        <i class="fas fa-comment"></i>
+                                        <span>38</span>
+                                    </div>
+                                </div>
+                                <div class="instagram-post">
+                                    <img src="assets/images/insta-5.jpg" alt="Instagram Post 5">
+                                    <div class="instagram-overlay">
+                                        <i class="fas fa-heart"></i>
+                                        <span>198</span>
+                                        <i class="fas fa-comment"></i>
+                                        <span>25</span>
+                                    </div>
+                                </div>
+                                <div class="instagram-post">
+                                    <img src="assets/images/insta-6.jpg" alt="Instagram Post 6">
+                                    <div class="instagram-overlay">
+                                        <i class="fas fa-heart"></i>
+                                        <span>421</span>
+                                        <i class="fas fa-comment"></i>
+                                        <span>67</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="slide-buttons instagram-buttons">
+                                <a href="https://instagram.com/hillfort" target="_blank" class="btn btn-primary btn-lg">
+                                    <i class="fab fa-instagram"></i> Follow Us on Instagram
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 8: YouTube Live Stream -->
+            <div class="slide slide-live">
+                <div class="slide-background" style="background-image: url('assets/images/hero-live.jpg');"></div>
+                <div class="container">
+                    <div class="slide-content slide-content-live">
+                        <div class="slide-content-inner">
+                            <!-- LEFT: text + buttons -->
+                            <div class="slide-text">
+                                <span class="slide-label live-label"><span class="live-dot"></span> Live Now</span>
+                                <h2 class="slide-title">Watch Our Events Live</h2>
+                                <p class="slide-description">
+                                    Catch graduations, performances and special events streaming live on our 
+                                    YouTube channel — wherever you are in the world.
+                                </p>
+                                <div class="live-status-bar" id="liveStatusBar">
+                                    <span class="live-indicator"><span class="live-dot-sm"></span> Checking stream status…</span>
+                                </div>
+                                <div class="slide-buttons">
+                                    <a href="https://www.youtube.com/@HillfortInternationalSchool/live" target="_blank" class="btn btn-live">
+                                        <i class="fab fa-youtube"></i> Watch Live
+                                    </a>
+                                    <a href="https://www.youtube.com/@HillfortInternationalSchool" target="_blank" class="btn btn-outline" style="font-size:0.82rem;padding:9px 16px">
+                                        Subscribe
+                                    </a>
+                                </div>
+                            </div>
+
+                            <!-- RIGHT: main embed + 3 recent video thumbnails -->
+                            <div class="live-embed-col">
+                                <!-- Main live embed / offline card -->
+                                <div class="live-embed-wrapper">
+                                    <div class="youtube-live-embed" id="ytLiveEmbed">
+                                        <div class="yt-offline-card">
+                                            <div class="yt-offline-icon"><i class="fab fa-youtube"></i></div>
+                                            <h4>No Live Stream Right Now</h4>
+                                            <p>Subscribe to be notified!</p>
+                                            <a href="https://www.youtube.com/@HillfortInternationalSchool" target="_blank" class="btn btn-live" style="font-size:0.74rem;padding:7px 14px;margin-top:6px">
+                                                <i class="fab fa-youtube"></i> Our Channel
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="image-badge live-badge">
+                                        <span class="live-dot-sm"></span>
+                                        <span id="liveViewers">YouTube</span>
+                                    </div>
+                                </div>
+
+                                <!-- 3 recent/popular channel videos -->
+                                <div class="yt-channel-thumbs">
+                                    <!-- Replace VIDEO_ID_1/2/3 with your actual YouTube video IDs -->
+                                    <!-- YouTube thumbnail URL format: https://img.youtube.com/vi/VIDEO_ID/mqdefault.jpg -->
+                                    <a class="yt-thumb" href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" target="_blank" title="Graduation Ceremony 2025">
+                                        <img src="https://img.youtube.com/vi/dQw4w9WgXcQ/mqdefault.jpg" alt="Graduation 2025" loading="lazy">
+                                        <div class="yt-thumb-overlay"><i class="fab fa-youtube"></i></div>
+                                        <span class="yt-thumb-label">Graduation 2025</span>
+                                    </a>
+                                    <a class="yt-thumb" href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" target="_blank" title="Sports Day 2025">
+                                        <img src="https://img.youtube.com/vi/dQw4w9WgXcQ/mqdefault.jpg" alt="Sports Day" loading="lazy">
+                                        <div class="yt-thumb-overlay"><i class="fab fa-youtube"></i></div>
+                                        <span class="yt-thumb-label">Sports Day 2025</span>
+                                    </a>
+                                    <a class="yt-thumb" href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" target="_blank" title="Ankara Day Celebration">
+                                        <img src="https://img.youtube.com/vi/dQw4w9WgXcQ/mqdefault.jpg" alt="Ankara Day" loading="lazy">
+                                        <div class="yt-thumb-overlay"><i class="fab fa-youtube"></i></div>
+                                        <span class="yt-thumb-label">Ankara Day 2026</span>
+                                    </a>
+                                </div>
+                            </div>
+
+                        </div><!-- /.slide-content-inner -->
+                    </div><!-- /.slide-content -->
+                </div>
+            </div>
+
+        </div><!-- /.slider-container -->
+        <!-- Slider Dots — outside slider-container so overflow:hidden never clips them -->
+        <div class="slider-dots">
+            <div class="slider-dots-inner">
+                <span class="dot active" data-slide="0"></span>
+                <span class="dot" data-slide="1"></span>
+                <span class="dot" data-slide="2"></span>
+                <span class="dot" data-slide="3"></span>
+                <span class="dot" data-slide="4"></span>
+                <span class="dot" data-slide="5"></span>
+                <span class="dot" data-slide="6"></span>
+                <span class="dot live-dot-indicator" data-slide="7" title="Live Stream"></span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section">
+        <div class="container">
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-book-reader"></i>
+                    </div>
+                    <h3>Dual Curriculum</h3>
+                    <p>Nigerian & British curriculum for comprehensive education</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                    </div>
+                    <h3>Expert Teachers</h3>
+                    <p>Highly qualified and passionate educators</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-laptop-code"></i>
+                    </div>
+                    <h3>Modern Facilities</h3>
+                    <p>State-of-the-art learning environment</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3>Small Classes</h3>
+                    <p>Personalized attention for every student</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Preview Section -->
+    <section class="about-preview">
+        <div class="container">
+            <div class="two-column-layout">
+                <div class="column-image">
+                    <img src="assets/images/about-image.jpg" alt="Hillfort School Building">
+                    <div class="image-overlay">
+                        <div class="overlay-content">
+                            <i class="fas fa-play-circle"></i>
+                            <span>Watch Our Story</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="column-text">
+                    <span class="section-label">About Hillfort</span>
+                    <h2 class="section-title">Building Tomorrow's Leaders Today</h2>
+                    <p class="section-description">
+                        For over 15 years, Hillfort International School has been at the forefront of quality education 
+                        in Nigeria. We combine academic excellence with character development, preparing students 
+                        for success in an ever-changing world.
+                    </p>
+                    <ul class="check-list">
+                        <li><i class="fas fa-check-circle"></i> Government approved and internationally recognized</li>
+                        <li><i class="fas fa-check-circle"></i> Holistic education approach (Academic, Social, Emotional)</li>
+                        <li><i class="fas fa-check-circle"></i> Safe and nurturing learning environment</li>
+                        <li><i class="fas fa-check-circle"></i> Strong parent-school partnership</li>
+                    </ul>
+                    <a href="pages/our-story.html" class="btn btn-primary">
+                        Learn More About Us <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Programs Section -->
+    <section class="programs-section">
+        <div class="container">
+            <div class="section-header text-center">
+                <span class="section-label">Our Programs</span>
+                <h2 class="section-title">Education for Every Stage</h2>
+                <p class="section-subtitle">From early years to secondary school, we nurture growth at every level</p>
+            </div>
+
+            <div class="programs-grid">
+                <div class="program-card">
+                    <div class="program-image">
+                        <img src="assets/images/eyfs.jpg" alt="Early Years">
+                        <div class="program-badge">Ages 2-5</div>
+                    </div>
+                    <div class="program-content">
+                        <h3>Early Years Foundation Stage (EYFS)</h3>
+                        <p>A nurturing environment where young learners develop foundational skills through play-based learning.</p>
+                        <ul>
+                            <li><i class="fas fa-check"></i> Play-based learning</li>
+                            <li><i class="fas fa-check"></i> Social development</li>
+                            <li><i class="fas fa-check"></i> Early literacy & numeracy</li>
+                        </ul>
+                        <a href="pages/eyfs.html" class="btn-link">Learn More <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+
+                <div class="program-card featured">
+                    <div class="program-image">
+                        <img src="assets/images/primary.jpg" alt="Primary School">
+                        <div class="program-badge">Ages 6-11</div>
+                    </div>
+                    <div class="program-content">
+                        <h3>Primary School</h3>
+                        <p>Building strong academic foundations with engaging, inquiry-based learning approaches.</p>
+                        <ul>
+                            <li><i class="fas fa-check"></i> Core subject mastery</li>
+                            <li><i class="fas fa-check"></i> Critical thinking skills</li>
+                            <li><i class="fas fa-check"></i> Character development</li>
+                        </ul>
+                        <a href="pages/primary.html" class="btn-link">Learn More <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+
+                <div class="program-card">
+                    <div class="program-image">
+                        <img src="assets/images/secondary.jpg" alt="Secondary School">
+                        <div class="program-badge">Ages 12-18</div>
+                    </div>
+                    <div class="program-content">
+                        <h3>Secondary School</h3>
+                        <p>Preparing students for higher education and future careers with rigorous academic programs.</p>
+                        <ul>
+                            <li><i class="fas fa-check"></i> WAEC & IGCSE preparation</li>
+                            <li><i class="fas fa-check"></i> University guidance</li>
+                            <li><i class="fas fa-check"></i> Leadership development</li>
+                        </ul>
+                        <a href="pages/secondary.html" class="btn-link">Learn More <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- School Updates/News Section -->
+    <section class="updates-section">
+        <div class="container">
+            <div class="section-header">
+                <div>
+                    <span class="section-label">Latest Updates</span>
+                    <h2 class="section-title">News & Events</h2>
+                </div>
+                <a href="#" class="btn btn-outline">View All News</a>
+            </div>
+
+            <!-- Featured Large Card -->
+            <div class="update-featured">
+                <div class="update-card large">
+                    <div class="update-image">
+                        <img src="assets/images/summer-school.jpg" alt="Summer School 2025">
+                        <div class="update-category">Featured</div>
+                    </div>
+                    <div class="update-content">
+                        <div class="update-meta">
+                            <span><i class="far fa-calendar"></i> July 22, 2025</span>
+                            <span><i class="far fa-user"></i> Admin</span>
+                        </div>
+                        <h3>Summer School 2025 Registration Now Open</h3>
+                        <p>Join us for an exciting summer of learning and fun! Our 2025 summer program offers specialized courses in STEM, Arts, and Sports.</p>
+                        <a href="#" class="btn-link">Read More <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- News Carousel -->
+            <div class="news-carousel-wrapper">
+                <div class="news-carousel" id="newsCarousel">
+                    <div class="news-carousel-track">
+                        <!-- Thumbnail 1 -->
+                        <div class="news-thumbnail">
+                            <div class="thumbnail-image">
+                                <img src="assets/images/excursion.jpg" alt="Excursion">
+                                <div class="thumbnail-category">Events</div>
+                            </div>
+                            <div class="thumbnail-content">
+                                <h4>Excursion to Inova8 Hub</h4>
+                                <p class="thumbnail-date"><i class="far fa-calendar"></i> Aug 3, 2025</p>
+                            </div>
+                        </div>
+
+                        <!-- Thumbnail 2 -->
+                        <div class="news-thumbnail">
+                            <div class="thumbnail-image">
+                                <img src="assets/images/valentines.jpg" alt="Valentine's Day">
+                                <div class="thumbnail-category">Celebration</div>
+                            </div>
+                            <div class="thumbnail-content">
+                                <h4>Love and Care - Valentine's</h4>
+                                <p class="thumbnail-date"><i class="far fa-calendar"></i> Feb 14, 2026</p>
+                            </div>
+                        </div>
+
+                        <!-- Thumbnail 3 -->
+                        <div class="news-thumbnail">
+                            <div class="thumbnail-image">
+                                <img src="assets/images/ankara-1.jpg" alt="Ankara Day">
+                                <div class="thumbnail-category">Culture</div>
+                            </div>
+                            <div class="thumbnail-content">
+                                <h4>Ankara Day Celebration</h4>
+                                <p class="thumbnail-date"><i class="far fa-calendar"></i> Feb 16, 2026</p>
+                            </div>
+                        </div>
+
+                        <!-- Thumbnail 4 -->
+                        <div class="news-thumbnail">
+                            <div class="thumbnail-image">
+                                <img src="assets/images/sports-day.jpg" alt="Sports Day">
+                                <div class="thumbnail-category">Sports</div>
+                            </div>
+                            <div class="thumbnail-content">
+                                <h4>Annual Sports Day 2026</h4>
+                                <p class="thumbnail-date"><i class="far fa-calendar"></i> Mar 1, 2026</p>
+                            </div>
+                        </div>
+
+                        <!-- Thumbnail 5 -->
+                        <div class="news-thumbnail">
+                            <div class="thumbnail-image">
+                                <img src="assets/images/science-fair.jpg" alt="Science Fair">
+                                <div class="thumbnail-category">Academic</div>
+                            </div>
+                            <div class="thumbnail-content">
+                                <h4>Science Fair Showcase</h4>
+                                <p class="thumbnail-date"><i class="far fa-calendar"></i> Mar 10, 2026</p>
+                            </div>
+                        </div>
+
+                        <!-- Thumbnail 6 -->
+                        <div class="news-thumbnail">
+                            <div class="thumbnail-image">
+                                <img src="assets/images/career-day.jpg" alt="Career Day">
+                                <div class="thumbnail-category">Events</div>
+                            </div>
+                            <div class="thumbnail-content">
+                                <h4>Career Day 2026</h4>
+                                <p class="thumbnail-date"><i class="far fa-calendar"></i> Mar 15, 2026</p>
+                            </div>
+                        </div>
+
+                        <!-- Thumbnail 7 -->
+                        <div class="news-thumbnail">
+                            <div class="thumbnail-image">
+                                <img src="assets/images/art-exhibition.jpg" alt="Art Exhibition">
+                                <div class="thumbnail-category">Arts</div>
+                            </div>
+                            <div class="thumbnail-content">
+                                <h4>Student Art Exhibition</h4>
+                                <p class="thumbnail-date"><i class="far fa-calendar"></i> Mar 20, 2026</p>
+                            </div>
+                        </div>
+
+                        <!-- Thumbnail 8 -->
+                        <div class="news-thumbnail">
+                            <div class="thumbnail-image">
+                                <img src="assets/images/world-book-day.jpg" alt="World Book Day">
+                                <div class="thumbnail-category">Celebration</div>
+                            </div>
+                            <div class="thumbnail-content">
+                                <h4>World Book Day</h4>
+                                <p class="thumbnail-date"><i class="far fa-calendar"></i> Apr 23, 2026</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Calendar Preview Section -->
+    <section class="content-section" id="homeCalendarSection" style="display:none">
+        <div class="container">
+            <div class="two-column-layout" style="align-items:center">
+                <div class="column-text">
+                    <span class="section-label">Stay Informed</span>
+                    <h2 class="section-title">This Term's Calendar</h2>
+                    <p>Keep track of term dates, mid-term breaks, and key school events all in one place — updated as the school year unfolds.</p>
+
+                    <div class="term-status-card sidebar-card" id="homeTermStatusCard" style="display:none;margin:22px 0;max-width:320px">
+                        <div class="sidebar-card-body">
+                            <span class="term-status-label">Now In Session</span>
+                            <div class="term-status-name" id="homeTermStatusName">&mdash;</div>
+                            <div class="term-status-countdown">
+                                <div><span class="term-status-num" id="homeTermStatusDays">&mdash;</span><span class="term-status-unit">Days Left</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="slide-buttons">
+                        <a href="pages/term-calendar.html" class="btn btn-primary">View Full Calendar <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+                <div style="display:flex;justify-content:center">
+                    <div class="sidebar-card" style="width:100%;max-width:360px">
+                        <div class="sidebar-card-header">
+                            <div class="mini-cal-nav">
+                                <button type="button" id="homeMiniCalPrev" aria-label="Previous month"><i class="fas fa-chevron-left"></i></button>
+                                <span class="mini-cal-month" id="homeMiniCalMonthLabel">Month Year</span>
+                                <button type="button" id="homeMiniCalNext" aria-label="Next month"><i class="fas fa-chevron-right"></i></button>
+                            </div>
+                        </div>
+                        <div class="sidebar-card-body">
+                            <div class="mini-cal-weekdays"><span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span></div>
+                            <div class="mini-cal-grid" id="homeMiniCalGrid"></div>
+                            <div class="mini-cal-detail" id="homeMiniCalDetail"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-content">
+                <div class="cta-text">
+                    <h2>Ready to Join a School That Puts Your Child First?</h2>
+                    <p>Start your journey with Hillfort today and give your child the gift of excellence.</p>
+                </div>
+                <div class="cta-buttons">
+                    <a href="pages/apply.html" class="btn btn-cta-primary btn-lg">
+                        Apply Now <i class="fas fa-arrow-right"></i>
+                    </a>
+                    <a href="pages/school-tour.html" class="btn btn-cta-outline btn-lg">
+                        Book a Tour
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter Section -->
+    <section class="newsletter-section">
+        <div class="container">
+            <div class="newsletter-content">
+                <div class="newsletter-text">
+                    <div class="newsletter-icon">
+                        <i class="fas fa-envelope-open-text"></i>
+                    </div>
+                    <div>
+                        <h2>Subscribe to Our Newsletter</h2>
+                        <p>📬 Stay Updated with Hillfort News - Be the first to receive updates, events, and exciting news</p>
+                    </div>
+                </div>
+                <form class="newsletter-form" id="newsletterForm">
+                    <div class="form-group">
+                        <input type="email" placeholder="Enter your email address" required>
+                        <button type="submit" class="btn btn-primary">
+                            Subscribe <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                    <p class="form-note">
+                        <i class="fas fa-lock"></i> We respect your privacy. Unsubscribe at any time.
+                    </p>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="footer-top">
+            <div class="container">
+                <div class="footer-grid">
+                    <!-- Column 1: School Info -->
+                    <div class="footer-column footer-about">
+                        <div class="footer-logo">
+                            <img src="assets/images/logo.png" alt="Hillfort Logo">
+                        </div>
+                        <p class="footer-description">
+                            Hillfort International School is a value-driven learning community in Abuja, Nigeria, 
+                            committed to academic excellence and character development. We nurture confident, 
+                            compassionate learners through a blend of global best practices and faith-based education.
+                        </p>
+                        <div class="footer-social">
+                            <a href="https://facebook.com/hillfort" target="_blank" aria-label="Facebook">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                            <a href="https://instagram.com/hillfortinternationslschool" target="_blank" aria-label="Instagram">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                            <a href="https://wa.me/2349130267145" target="_blank" aria-label="WhatsApp">
+                                <i class="fab fa-whatsapp"></i>
+                            </a>
+                        </div>
+
+                        <!-- Newsletter Form -->
+                        <div class="footer-newsletter">
+                            <h4>Subscribe to Newsletter</h4>
+                            <form class="footer-newsletter-form">
+                                <input type="email" placeholder="Your email address" required>
+                                <button type="submit"><i class="fas fa-paper-plane"></i></button>
+                            </form>
+                        </div>
+
+                        <!-- Map -->
+                        <div class="footer-map">
+                            <iframe 
+                                src="https://maps.google.com/maps?output=embed&q=C225%20Maccido%20Royal%20Estate%2C%20Galadimawa%2C%20FCT-Abuja%2C%20Nigeria&z=10&t=m" 
+                                width="100%" 
+                                height="180" 
+                                style="border:0;" 
+                                allowfullscreen="" 
+                                loading="lazy">
+                            </iframe>
+                        </div>
+                    </div>
+
+                    <!-- Column 2: Hillfort Int'l School -->
+                    <div class="footer-column">
+                        <h4><i class="fas fa-school"></i> Hillfort Int'l School</h4>
+                        <ul class="footer-links">
+                            <li>▪ <a href="pages/our-story.html">About</a></li>
+                            <li>▪ <a href="pages/mission-vision.html">Mission & Vision</a></li>
+                            <li>▪ <a href="pages/leadership.html">Leadership</a></li>
+                            <li>▪ <a href="pages/government-approved.html">Accreditation</a></li>
+                            <li>▪ <a href="pages/career.html">Careers</a></li>
+                            <li>▪ <a href="pages/contact.html">Contact</a></li>
+                        </ul>
+
+                        <h4 class="footer-subtitle"><i class="fas fa-book"></i> Academics</h4>
+                        <ul class="footer-links">
+                            <li>▪ <a href="pages/eyfs.html">EYFS</a></li>
+                            <li>▪ <a href="pages/primary.html">Primary</a></li>
+                            <li>▪ <a href="pages/secondary.html">Secondary</a></li>
+                            <li>▪ <a href="pages/curriculum.html">Nigerian/British Curriculum</a></li>
+                        </ul>
+
+                        <h4 class="footer-subtitle"><i class="fas fa-graduation-cap"></i> School Life</h4>
+                        <ul class="footer-links">
+                            <li>▪ <a href="pages/co-curricular.html">Co-Curricular</a></li>
+                            <li>▪ <a href="pages/sports-clubs.html">Sports & Clubs</a></li>
+                            <li>▪ <a href="pages/term-calendar.html">Term Calendar</a></li>
+                            <li>▪ <a href="pages/pastoral-care.html">Pastoral Care</a></li>
+                            <li>▪ <a href="pages/student-leadership.html">Student Leadership</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Column 3: Admissions & Quick Links -->
+                    <div class="footer-column">
+                        <h4><i class="fas fa-user-plus"></i> Admissions</h4>
+                        <ul class="footer-links">
+                            <li>▪ <a href="pages/why-choose-us.html">Why Choose Us</a></li>
+                            <li>▪ <a href="pages/admission.html">Process</a></li>
+                            <li>▪ <a href="pages/entry-requirements.html">Entry Requirements</a></li>
+                            <li>▪ <a href="pages/school-fees.html">Fees</a></li>
+                            <li>▪ <a href="pages/school-tour.html">Book Tour</a></li>
+                            <li>▪ <a href="pages/apply.html">Apply Online</a></li>
+                        </ul>
+
+                        <h4 class="footer-subtitle"><i class="fas fa-link"></i> Quick Links</h4>
+                        <ul class="footer-links">
+                            <li>▪ <a href="pages/sms.html">SMS Portal</a></li>
+                            <li>▪ <a href="pages/policies.html">Policies</a></li>
+                            <li>▪ <a href="pages/uniform-guide.html">Uniform Guide</a></li>
+                            <li>▪ <a href="pages/newsletter.html">Newsletter</a></li>
+                            <li>▪ <a href="pages/media-gallery.html">Media Gallery</a></li>
+                            <li>▪ <a href="pages/sitemap.html">SiteMAP</a></li>
+                            <li>▪ <a href="pages/downloads.html">Downloads</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer Bottom -->
+        <div class="footer-bottom">
+            <div class="container">
+                <div class="footer-bottom-content">
+                    <p class="footer-copyright">&copy; <span class="footer-year">2026</span> Hillfort International School. All rights reserved.</p>
+                    <div class="footer-bottom-links">
+                        <a href="pages/privacy-policy.html">Privacy Policy</a>
+                        <span>|</span>
+                        <a href="pages/terms.html">Terms of Service</a>
+                        <span>|</span>
+                        <a href="pages/sitemap.html">Sitemap</a>
+                    </div>
+                    <p class="powered-by">
+                        Powered by: <strong><a href="https://xofa-technology.com" target="_blank">Xofa-Technology Ltd.</a></strong> | 07049978001
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scroll to Top Button -->
+    <button class="scroll-to-top" id="scrollToTop" aria-label="Scroll to Top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- Custom JavaScript -->
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/directus-client.js"></script>
+    <script src="assets/js/youtube-embed.js"></script>
+    <script src="assets/js/page-blocks-renderer.js"></script>
+    <script src="assets/js/mini-calendar-widget.js"></script>
+    <script src="assets/js/home-calendar.js"></script>
+    <script src="assets/js/site-settings-loader.js"></script>
+    <script src="assets/js/popup-security.js"></script>
+</body>
 </html>
