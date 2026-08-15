@@ -1,0 +1,189 @@
+openapi: 3.0.3
+info:
+  title: Hillfort International School SMS API
+  version: 1.0.0
+  description: API documentation for the multi-tenant hybrid curriculum School Management System backend.
+servers:
+  - url: http://localhost:5000/api/v1
+    description: Local Development Server
+  - url: https://api.hillfortintlschool.ng/api/v1
+    description: Production Server
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    ApiResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [success, error]
+        message:
+          type: string
+        data:
+          type: object
+          nullable: true
+        error:
+          type: string
+          nullable: true
+
+    UserDTO:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+          format: email
+        firstName:
+          type: string
+        lastName:
+          type: string
+        role:
+          type: string
+          enum: [SUPER_ADMIN, PRINCIPAL, BURSAR, TEACHER, PARENT, STUDENT]
+        isActive:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    LoginRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+
+    GradeRecordDTO:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        studentId:
+          type: string
+          format: uuid
+        subject:
+          type: string
+        term:
+          type: string
+          enum: [FIRST_TERM, SECOND_TERM, THIRD_TERM]
+        session:
+          type: string
+          example: "2025/2026"
+        caScore:
+          type: number
+          nullable: true
+          description: Continuous Assessment score (Nigerian curriculum 40%)
+        examScore:
+          type: number
+          nullable: true
+          description: Examination score (Nigerian curriculum 60%)
+        britishGrade:
+          type: string
+          nullable: true
+          description: British curriculum grading (e.g., A*, Checkpoint Level)
+        curriculumType:
+          type: string
+          enum: [NIGERIAN, BRITISH, HYBRID]
+
+    FeeRecordDTO:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        studentId:
+          type: string
+          format: uuid
+        totalAmount:
+          type: number
+        amountPaid:
+          type: number
+        term:
+          type: string
+          enum: [FIRST_TERM, SECOND_TERM, THIRD_TERM]
+        session:
+          type: string
+        isCleared:
+          type: boolean
+        gatewayRef:
+          type: string
+          nullable: true
+
+paths:
+  /auth/login:
+    post:
+      summary: Authenticate user & get JWT token
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Successfully authenticated
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          token:
+                            type: string
+                          user:
+                            $ref: '#/components/schemas/UserDTO'
+        '401':
+          description: Invalid credentials
+
+  /students:
+    get:
+      summary: Retrieve all student profiles
+      tags:
+        - Students
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: query
+          name: curriculum
+          schema:
+            type: string
+            enum: [NIGERIAN, BRITISH, HYBRID]
+        - in: query
+          name: class
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of students retrieved successfully
+    post:
+      summary: Enroll a new student
+      tags:
+        - Students
+      security:
+        - BearerAuth: []
+      requestBody:
+      ...

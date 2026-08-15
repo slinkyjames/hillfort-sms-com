@@ -1,0 +1,32 @@
+# Stage 1: Build stage
+FROM node:20-alpine AS builder
+
+# Enable corepack and install pnpm
+RUN corepack enable && corepack prepare pnpm@9.0.0 --activate
+
+WORKDIR /app
+
+# Copy root monorepo configuration files
+COPY pnpm-lock.yaml pnpm-workspace.yaml package.json turbo.json ./
+
+# Copy shared packages and the web-portal source code
+COPY packages ./packages
+COPY apps/web-portal ./apps/web-portal
+
+# Install dependencies across the monorepo workspace
+RUN pnpm install --frozen-lockfile
+
+# Build the web-portal application
+RUN pnpm --filter @sms/web-portal build
+
+# Stage 2: Production server using Nginx
+FROM nginx:alpine
+
+# Copy built static assets from the builder stage to Nginx's public directory
+COPY --from=builder /app/apps/web-portal/dist /usr/share/nginx/html
+
+# Expose HTTP port
+EXPOSE 80
+
+# Start Nginx in the foreground
+CMD ["nginx", "-g", "daemon off;"]

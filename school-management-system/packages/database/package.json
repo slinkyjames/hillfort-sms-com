@@ -1,0 +1,9 @@
+{
+  "name": "@sms/database",
+  "version": "1.0.0",
+  "main": "src/index.ts",
+  "scripts": {
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push"
+  }
+}

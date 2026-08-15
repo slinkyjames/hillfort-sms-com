@@ -1,0 +1,13 @@
+{
+  "name": "@sms/api",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "ts-node-dev src/server.ts",
+    "build": "tsc"
+  },
+  "dependencies": {
+    "@sms/database": "workspace:*",
+    "@sms/shared-types": "workspace:*"
+  }
+}
