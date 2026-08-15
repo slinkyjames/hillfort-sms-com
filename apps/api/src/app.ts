@@ -1,13 +1,13 @@
 import express, { Application, Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
-import { authModule } from './modules/auth/auth.module';
-import { academicsModule } from './modules/academics/academics.module';
-import { attendanceModule } from './modules/attendance/attendance.module';
+// import { authModule } from './modules/auth/auth.module';
+// import { academicsModule } from './modules/academics/academics.module';
+// import { attendanceModule } from './modules/attendance/attendance.module';
 import { financeModule } from './modules/finance/finance.module';
-import { studentsModule } from './modules/students/students.module';
-import { usersModule } from './modules/users/users.module';
-import { gradingModule } from './modules/grading/grading.module';
+// import { studentsModule } from './modules/students/students.module';
+// import { usersModule } from './modules/users/users.module';
+// import { gradingModule } from './modules/grading/grading.module';
 
 const app: Application = express();
 
@@ -38,13 +38,13 @@ app.get('/health', (_req: Request, res: Response) => {
 /**
  * Register Domain Module Routers
  */
-app.use('/api/auth', authModule);
-app.use('/api/academics', academicsModule);
-app.use('/api/attendance', attendanceModule);
+// app.use('/api/auth', authModule);
+// app.use('/api/academics', academicsModule);
+// app.use('/api/attendance', attendanceModule);
 app.use('/api/finance', financeModule);
-app.use('/api/students', studentsModule);
-app.use('/api/users', usersModule);
-app.use('/api/grading', gradingModule);
+// app.use('/api/students', studentsModule);
+// app.use('/api/users', usersModule);
+// app.use('/api/grading', gradingModule);
 
 /**
  * Catch-all 404 handler for unmatched routes.
