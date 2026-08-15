@@ -1,0 +1,2180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="apple-touch-icon" sizes="180x180" href="../assets/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32"  href="../assets/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16"  href="../assets/images/favicon-16x16.png">
+    <link rel="manifest" href="../assets/images/site.webmanifest">
+    <script>
+    // JWT-based session guard (Vercel/stateless — no PHP cookies)
+    (function() {
+        document.documentElement.style.visibility = 'hidden';
+        var token = localStorage.getItem('hillfort_admin_jwt');
+        if (!token) {
+            window.location.replace('../secure-admin-2026/');
+            return;
+        }
+        fetch('/api/admin-session', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+            body: JSON.stringify({ token: token })
+        })
+            .then(function(r) { return r.json(); })
+            .then(function(d) {
+                if (d.ok) {
+                    document.documentElement.style.visibility = '';
+                    var setLabel = function() {
+                        var el = document.getElementById('adminUserLabel');
+                        if (el) el.textContent = '\uD83D\uDC64 ' + (d.name || d.email || 'Admin');
+                    };
+                    if (document.readyState === 'loading') {
+                        document.addEventListener('DOMContentLoaded', setLabel);
+                    } else {
+                        setLabel();
+                    }
+                } else {
+                    window.location.replace('../secure-admin-2026/');
+                }
+            })
+            .catch(function() {
+                window.location.replace('../secure-admin-2026/');
+            });
+    })();
+    </script>
+    <title>Post Manager — Hillfort International School</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Nunito:wght@300;400;600;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --primary: #800000;
+            --primary-dark: #580000;
+            --gold: #d4a017;
+            --gold-light: #f8d66d;
+            --bg: #f4f6fa;
+            --white: #ffffff;
+            --text: #1a1a2e;
+            --text-dark: #1a1a2e;
+            --text-light: #5a6070;
+            --border: #e2e8f0;
+            --radius: 10px;
+            --shadow: 0 2px 12px rgba(0,0,0,0.08);
+            --shadow-lg: 0 8px 32px rgba(0,0,0,0.12);
+            --success: #16a34a;
+            --warning: #d97706;
+            --info: #2563eb;
+            --danger: #dc2626;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        /* ── TOP BAR ── */
+        .admin-topbar {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            padding: 0 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 58px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 16px rgba(0,0,0,0.25);
+            border-bottom: 2px solid var(--gold);
+        }
+        .topbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: white;
+        }
+        .topbar-brand i { font-size: 1.4rem; color: var(--gold); }
+        .topbar-brand h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 1rem;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            color: white;
+        }
+        .topbar-brand span {
+            font-size: 0.72rem;
+            color: rgba(255,255,255,0.65);
+            font-family: 'Poppins', sans-serif;
+            font-weight: 400;
+        }
+        .topbar-actions { display: flex; align-items: center; gap: 10px; }
+        .topbar-btn {
+            display: flex; align-items: center; gap: 6px;
+            padding: 7px 14px; border-radius: 8px;
+            font-size: 0.82rem; font-weight: 600; font-family: 'Poppins', sans-serif;
+            cursor: pointer; border: 1px solid; text-decoration: none; transition: all 0.2s;
+        }
+        .topbar-btn-outline { background: transparent; color: rgba(255,255,255,0.85); border-color: rgba(255,255,255,0.3); }
+        .topbar-btn-outline:hover { background: rgba(255,255,255,0.12); color: white; }
+        .topbar-btn-gold { background: var(--gold); color: var(--primary-dark); border-color: var(--gold); font-weight: 700; }
+        .topbar-btn-gold:hover { background: var(--gold-light); }
+
+        /* ── LAYOUT ── */
+        .admin-layout {
+            display: grid;
+            grid-template-columns: 220px 1fr;
+            min-height: calc(100vh - 58px);
+        }
+
+        /* ── SIDEBAR ── */
+        .admin-sidebar {
+            background: var(--white);
+            border-right: 1px solid var(--border);
+            padding: 20px 0;
+            position: sticky;
+            top: 58px;
+            height: calc(100vh - 58px);
+            overflow-y: auto;
+        }
+        .sidebar-section-label {
+            font-size: 0.67rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-light);
+            padding: 16px 20px 6px;
+            font-family: 'Poppins', sans-serif;
+            border-top: 1px solid var(--border);
+            margin-top: 6px;
+        }
+        .sidebar-section-label:first-child { border-top: none; margin-top: 0; }
+        .sidebar-item {
+            display: flex; align-items: center; gap: 10px;
+            padding: 9px 20px;
+            font-size: 0.86rem; font-weight: 600;
+            color: var(--text-light);
+            cursor: pointer;
+            border-radius: 0;
+            transition: all 0.18s;
+            border-left: 3px solid transparent;
+            text-decoration: none;
+        }
+        .sidebar-item:hover, .sidebar-item.active {
+            background: #fdf6ef;
+            color: var(--primary);
+            border-left-color: var(--primary);
+        }
+        .sidebar-item i {
+            width: 24px; height: 24px; text-align: center; font-size: 0.82rem;
+            display: inline-flex; align-items: center; justify-content: center;
+            border-radius: 7px; transition: background 0.18s;
+        }
+        .sidebar-item:hover i, .sidebar-item.active i { background: rgba(128,0,0,0.1); }
+        .sidebar-badge {
+            margin-left: auto;
+            background: var(--primary);
+            color: white;
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 1px 7px;
+            border-radius: 10px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* ── USER APPROVAL CARDS ── */
+        .user-approval-card {
+            display: flex; align-items: center; gap: 16px;
+            background: white; border: 1px solid var(--border);
+            border-left: 4px solid var(--primary);
+            border-radius: 10px; padding: 16px 18px;
+            margin-bottom: 10px; flex-wrap: wrap;
+        }
+        .user-approval-card.approved { border-left-color: #16a34a; }
+        .user-approval-card.rejected { border-left-color: #dc2626; opacity: 0.65; }
+        .user-avatar {
+            width: 44px; height: 44px;
+            background: linear-gradient(135deg, var(--primary), #a00000);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 1rem; font-weight: 700;
+            font-family: 'Poppins', sans-serif; flex-shrink: 0;
+        }
+        .user-info { flex: 1; min-width: 0; }
+        .user-info strong { display: block; font-size: 0.92rem; color: var(--text-dark); font-family: 'Poppins', sans-serif; }
+        .user-info span { font-size: 0.78rem; color: var(--text-light); }
+        .user-meta-row { display: flex; gap: 12px; margin-top: 4px; flex-wrap: wrap; }
+        .user-meta-tag {
+            display: inline-flex; align-items: center; gap: 5px;
+            font-size: 0.72rem; color: var(--text-light);
+            background: #f4f4f8; padding: 2px 8px; border-radius: 6px;
+        }
+        .user-meta-tag i { font-size: 0.68rem; color: var(--primary); }
+        .user-actions { display: flex; gap: 8px; flex-shrink: 0; }
+        .btn-approve {
+            padding: 7px 16px; border: none; border-radius: 7px;
+            background: #16a34a; color: white; font-size: 0.78rem;
+            font-weight: 700; font-family: 'Poppins', sans-serif; cursor: pointer;
+            display: inline-flex; align-items: center; gap: 5px;
+            transition: background 0.2s;
+        }
+        .btn-approve:hover { background: #15803d; }
+
+        /* ── New dynamic classes ─────────────────────────────────── */
+        .user-card {
+            display: flex; align-items: center; gap: 14px;
+            background: #fff; border: 1px solid var(--border);
+            border-radius: 12px; padding: 14px 18px;
+            margin-bottom: 10px; flex-wrap: wrap;
+        }
+        .user-name  { font-weight: 700; font-size: .92rem; color: var(--text-dark); font-family: 'Poppins', sans-serif; }
+        .user-email { font-size: .78rem; color: var(--text-light); margin-top: 2px; }
+        .user-badge {
+            display: inline-flex; align-items: center;
+            font-size: .7rem; font-weight: 700; padding: 2px 8px;
+            border-radius: 20px; background: #80000015; color: #800000;
+        }
+        .row-btn {
+            padding: 5px 10px; border: 1px solid var(--border);
+            border-radius: 7px; background: #fff; cursor: pointer;
+            font-size: .8rem; color: var(--text-dark);
+            display: inline-flex; align-items: center; gap: 5px;
+            transition: all .15s;
+        }
+        .row-btn:hover { background: #f8f8f8; border-color: #ccc; }
+        .row-btn-ok  { background: #f0fdf4 !important; color: #16a34a !important; border-color: #86efac !important; }
+        .row-btn-ok:hover { background: #dcfce7 !important; }
+        .row-btn-del { background: #fef2f2 !important; color: #dc2626 !important; border-color: #fca5a5 !important; }
+        .row-btn-del:hover { background: #fee2e2 !important; }
+        .stat-card--warn h4 { color: #d97706 !important; }
+        .filter-btn {
+            padding: 5px 14px; border-radius: 8px;
+            border: 1.5px solid var(--border); background: #fff;
+            color: var(--text-light); font-size: .74rem; font-weight: 700; cursor: pointer;
+        }
+        .filter-btn.active {
+            background: var(--primary); border-color: var(--primary); color: #fff;
+        }
+        /* editor toolbar */
+        .editor-toolbar {
+            display: flex; gap: 4px; padding: 6px 10px;
+            border: 1px solid var(--border); border-bottom: none;
+            border-radius: 8px 8px 0 0; background: #f8f8fc;
+        }
+        .editor-toolbar button {
+            padding: 4px 10px; border: 1px solid #ddd; border-radius: 5px;
+            background: #fff; cursor: pointer; font-size: .83rem;
+            color: var(--text-dark); transition: all .15s;
+        }
+        .editor-toolbar button:hover { background: #f0f0f8; }
+        .editor-area { border-radius: 0 0 8px 8px !important; }
+        .btn-reject {
+            padding: 7px 14px; border: 1px solid #dc2626; border-radius: 7px;
+            background: white; color: #dc2626; font-size: 0.78rem;
+            font-weight: 700; font-family: 'Poppins', sans-serif; cursor: pointer;
+            display: inline-flex; align-items: center; gap: 5px;
+            transition: all 0.2s;
+        }
+        .btn-reject:hover { background: #dc2626; color: white; }
+        .users-section-label {
+            font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 1px; color: var(--text-light);
+            font-family: 'Poppins', sans-serif; margin: 18px 0 8px;
+            display: flex; align-items: center; gap: 7px;
+        }
+        .users-section-label i { font-size: 0.8rem; }
+
+        /* ── MAIN CONTENT ── */
+        .admin-main {
+            padding: 28px;
+            overflow-y: auto;
+        }
+
+        /* ── PANEL HEADER ── */
+        .panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 22px;
+        }
+        .panel-header h2 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.25rem;
+            color: var(--primary-dark);
+            display: flex; align-items: center; gap: 10px;
+        }
+        .panel-header h2 i { color: var(--gold); font-size: 1.1rem; }
+        .panel-tabs {
+            display: flex;
+            gap: 6px;
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 5px;
+            margin-bottom: 22px;
+        }
+        .panel-tab {
+            flex: 1;
+            padding: 8px 14px;
+            border-radius: 7px;
+            font-size: 0.83rem;
+            font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            color: var(--text-light);
+            display: flex; align-items: center; justify-content: center; gap: 6px;
+            transition: all 0.2s;
+        }
+        .panel-tab.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 2px 8px rgba(128,0,0,0.2);
+        }
+        .panel-tab:hover:not(.active) { background: #fdf6ef; color: var(--primary); }
+
+        /* ── FORM CARD ── */
+        .form-card {
+            background: var(--white);
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            margin-bottom: 24px;
+        }
+        .form-card-header {
+            background: linear-gradient(135deg, #fdf6ef, #f5ebe3);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 22px;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .form-card-header i { color: var(--primary); font-size: 1rem; }
+        .form-card-header h3 { font-size: 0.95rem; font-weight: 700; color: var(--text); font-family: 'Poppins', sans-serif; }
+        .form-card-body { padding: 22px; }
+
+        /* ── FORM ELEMENTS ── */
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+        .form-row.full { grid-template-columns: 1fr; }
+        .form-row.three { grid-template-columns: 1fr 1fr 1fr; }
+        .form-group { display: flex; flex-direction: column; gap: 6px; }
+        .form-group label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text);
+            font-family: 'Poppins', sans-serif;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .form-group label .req { color: var(--danger); }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 10px 13px;
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.88rem;
+            font-family: 'Nunito', sans-serif;
+            color: var(--text);
+            background: white;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            outline: none;
+        }
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(128,0,0,0.08);
+        }
+        .form-group textarea { resize: vertical; min-height: 110px; }
+        .form-group .hint {
+            font-size: 0.74rem;
+            color: var(--text-light);
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Rich text toolbar mock */
+        .editor-toolbar {
+            display: flex;
+            gap: 4px;
+            padding: 8px 10px;
+            background: #f8fafc;
+            border: 1.5px solid var(--border);
+            border-bottom: none;
+            border-radius: 8px 8px 0 0;
+            flex-wrap: wrap;
+        }
+        .editor-btn {
+            padding: 4px 9px;
+            border: 1px solid var(--border);
+            border-radius: 5px;
+            background: white;
+            cursor: pointer;
+            font-size: 0.8rem;
+            color: var(--text);
+            font-weight: 700;
+            transition: all 0.15s;
+        }
+        .editor-btn:hover { background: var(--primary); color: white; border-color: var(--primary); }
+        .editor-btn.sep { background: transparent; border: none; color: var(--border); cursor: default; padding: 0 4px; }
+        .editor-area {
+            border: 1.5px solid var(--border);
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+            padding: 12px;
+            min-height: 160px;
+            font-size: 0.88rem;
+            font-family: 'Nunito', sans-serif;
+            color: var(--text);
+            background: white;
+            outline: none;
+        }
+        .editor-area:focus { border-color: var(--primary); }
+
+        /* Image upload */
+        .img-upload-zone {
+            border: 2px dashed var(--border);
+            border-radius: 10px;
+            padding: 24px;
+            text-align: center;
+            background: #fafafa;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .img-upload-zone:hover { border-color: var(--primary); background: #fdf6ef; }
+        .img-upload-zone i { font-size: 2rem; color: var(--text-light); margin-bottom: 8px; display: block; }
+        .img-upload-zone p { font-size: 0.85rem; color: var(--text-light); }
+        .img-upload-zone span { font-size: 0.78rem; color: var(--primary); font-weight: 700; }
+        .img-upload-zone input[type="file"] { display: none; }
+
+        /* Toggle switch */
+        .toggle-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .toggle-row:last-child { border-bottom: none; }
+        .toggle-label { font-size: 0.87rem; color: var(--text); font-weight: 600; }
+        .toggle-sub { font-size: 0.76rem; color: var(--text-light); margin-top: 1px; }
+        .toggle-switch { position: relative; width: 42px; height: 24px; flex-shrink: 0; }
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+        .toggle-slider {
+            position: absolute; inset: 0;
+            background: #cbd5e1; border-radius: 24px;
+            cursor: pointer; transition: background 0.25s;
+        }
+        .toggle-slider::before {
+            content: ''; position: absolute;
+            width: 18px; height: 18px; left: 3px; top: 3px;
+            background: white; border-radius: 50%;
+            transition: transform 0.25s;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+        }
+        .toggle-switch input:checked + .toggle-slider { background: var(--primary); }
+        .toggle-switch input:checked + .toggle-slider::before { transform: translateX(18px); }
+
+        /* Colour picker strip */
+        .color-strip { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
+        .color-swatch {
+            width: 26px; height: 26px; border-radius: 50%;
+            cursor: pointer; border: 2px solid transparent;
+            transition: transform 0.15s;
+        }
+        .color-swatch:hover, .color-swatch.selected { transform: scale(1.25); border-color: var(--text); }
+
+        /* Action buttons */
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            padding: 16px 22px;
+            background: #f8fafc;
+            border-top: 1px solid var(--border);
+        }
+        .btn {
+            display: inline-flex; align-items: center; gap: 7px;
+            padding: 10px 20px; border-radius: 8px;
+            font-size: 0.85rem; font-weight: 700; font-family: 'Poppins', sans-serif;
+            cursor: pointer; border: none; transition: all 0.2s; text-decoration: none;
+        }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-dark); box-shadow: 0 4px 12px rgba(128,0,0,0.3); }
+        .btn-gold { background: var(--gold); color: var(--primary-dark); }
+        .btn-gold:hover { background: var(--gold-light); }
+        .btn-ghost { background: transparent; color: var(--text-light); border: 1.5px solid var(--border); }
+        .btn-ghost:hover { background: var(--bg); color: var(--text); }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-danger:hover { background: #b91c1c; }
+        .btn-sm { padding: 6px 13px; font-size: 0.78rem; }
+        .ml-auto { margin-left: auto; }
+
+        /* ── POSTS TABLE ── */
+        .posts-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+        .search-box {
+            flex: 1;
+            display: flex; align-items: center; gap: 8px;
+            background: white; border: 1.5px solid var(--border); border-radius: 8px;
+            padding: 8px 14px;
+        }
+        .search-box i { color: var(--text-light); }
+        .search-box input { border: none; outline: none; font-size: 0.86rem; font-family: 'Nunito', sans-serif; width: 100%; }
+        .filter-select {
+            padding: 8px 12px; border: 1.5px solid var(--border); border-radius: 8px;
+            font-size: 0.85rem; font-family: 'Nunito', sans-serif; background: white; cursor: pointer;
+        }
+        .posts-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: white;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+        .posts-table th {
+            background: #f8fafc;
+            padding: 11px 16px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--text-light);
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        .posts-table td {
+            padding: 13px 16px;
+            font-size: 0.86rem;
+            border-bottom: 1px solid #f0f4f8;
+            vertical-align: middle;
+        }
+        .posts-table tr:last-child td { border-bottom: none; }
+        .posts-table tr:hover td { background: #fafcff; }
+        .post-title-cell { font-weight: 700; color: var(--text); }
+        .post-title-cell span { display: block; font-size: 0.76rem; font-weight: 400; color: var(--text-light); margin-top: 2px; }
+
+        /* Status badges */
+        .badge {
+            display: inline-flex; align-items: center; gap: 4px;
+            padding: 3px 10px; border-radius: 20px;
+            font-size: 0.72rem; font-weight: 700;
+            font-family: 'Poppins', sans-serif;
+        }
+        .badge-published { background: #dcfce7; color: var(--success); }
+        .badge-draft { background: #fef9c3; color: #854d0e; }
+        .badge-scheduled { background: #dbeafe; color: var(--info); }
+        .badge-popup { background: #fce7f3; color: #9d174d; }
+        .badge-event { background: #ede9fe; color: #6d28d9; }
+        .badge-news { background: #ffedd5; color: #9a3412; }
+        .badge-gallery { background: #d1fae5; color: #065f46; }
+
+        /* Type icon dots */
+        .type-dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+
+        /* Row actions */
+        .row-actions { display: flex; gap: 6px; opacity: 0; transition: opacity 0.15s; }
+        .posts-table tr:hover .row-actions { opacity: 1; }
+
+        /* ── STATS ROW ── */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+            margin-bottom: 22px;
+        }
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 16px 18px;
+            border: 1px solid var(--border);
+            display: flex; align-items: center; gap: 14px;
+            box-shadow: var(--shadow);
+        }
+        .stat-card-icon {
+            width: 42px; height: 42px;
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem; flex-shrink: 0;
+        }
+        .stat-card-icon.maroon { background: #fce8e8; color: var(--primary); }
+        .stat-card-icon.gold { background: #fef9c3; color: var(--warning); }
+        .stat-card-icon.blue { background: #dbeafe; color: var(--info); }
+        .stat-card-icon.green { background: #dcfce7; color: var(--success); }
+        .stat-card h4 { font-size: 1.4rem; font-weight: 700; color: var(--text); line-height: 1; margin-bottom: 2px; }
+        .stat-card p { font-size: 0.76rem; color: var(--text-light); font-family: 'Poppins', sans-serif; }
+
+        /* ── POPUP BUILDER ── */
+        .popup-preview {
+            background: rgba(0,0,0,0.4);
+            border-radius: 10px;
+            padding: 20px;
+            display: flex; align-items: center; justify-content: center;
+            min-height: 200px;
+        }
+        .popup-box {
+            background: white;
+            border-radius: 14px;
+            padding: 24px;
+            max-width: 340px;
+            width: 100%;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+            border-top: 4px solid var(--primary);
+        }
+        .popup-box .popup-close {
+            position: absolute; top: 10px; right: 12px;
+            background: none; border: none; cursor: pointer;
+            font-size: 1rem; color: var(--text-light);
+        }
+        .popup-box h3 { font-size: 1.1rem; color: var(--primary-dark); margin-bottom: 8px; font-family: 'Poppins', sans-serif; }
+        .popup-box p { font-size: 0.85rem; color: var(--text-light); line-height: 1.6; margin-bottom: 14px; }
+        .popup-box .popup-btn { display: inline-block; padding: 9px 22px; background: var(--primary); color: white; border-radius: 8px; font-size: 0.84rem; font-weight: 700; font-family: 'Poppins', sans-serif; text-decoration: none; }
+
+        /* ── SECTION PANELS ── */
+        .panel { display: none; }
+        .panel.active { display: block; }
+
+        /* ── TOAST ── */
+        .toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; }
+        .toast {
+            background: var(--text); color: white; padding: 12px 18px;
+            border-radius: 10px; font-size: 0.84rem; font-weight: 600; font-family: 'Poppins', sans-serif;
+            display: flex; align-items: center; gap: 10px;
+            box-shadow: var(--shadow-lg);
+            animation: slideToast 0.35s ease both;
+        }
+        .toast.success { background: var(--success); }
+        .toast.warning { background: var(--warning); }
+        .toast i { font-size: 1rem; }
+        @keyframes slideToast { from { opacity: 0; transform: translateX(60px); } to { opacity: 1; transform: translateX(0); } }
+
+        /* ── MOBILE SIDEBAR TOGGLE ── */
+        .sidebar-toggle-btn { display: none; }
+        .sidebar-backdrop { display: none; }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 900px) {
+            .admin-layout { grid-template-columns: 1fr; }
+            .sidebar-toggle-btn {
+                display: flex; align-items: center; justify-content: center;
+                width: 34px; height: 34px; border-radius: 8px;
+                background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.3);
+                color: white; cursor: pointer; font-size: 1rem;
+            }
+            .sidebar-toggle-btn:hover { background: rgba(255,255,255,0.22); }
+            .admin-sidebar {
+                position: fixed; top: 58px; left: 0; bottom: 0; z-index: 200;
+                width: 250px; transform: translateX(-100%);
+                transition: transform 0.25s ease;
+                box-shadow: var(--shadow-lg);
+            }
+            .admin-sidebar.open { transform: translateX(0); }
+            .sidebar-backdrop {
+                display: none; position: fixed; inset: 58px 0 0 0; z-index: 150;
+                background: rgba(0,0,0,0.4);
+            }
+            .sidebar-backdrop.open { display: block; }
+            .stats-row { grid-template-columns: 1fr 1fr; }
+            .form-row.three { grid-template-columns: 1fr 1fr; }
+        }
+        @media (max-width: 600px) {
+            .admin-main { padding: 16px; }
+            .form-row { grid-template-columns: 1fr; }
+            .stats-row { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<header class="admin-topbar">
+    <div class="topbar-brand">
+        <button class="sidebar-toggle-btn" onclick="toggleSidebar()" aria-label="Toggle menu"><i class="fas fa-bars"></i></button>
+        <i class="fas fa-pen-nib"></i>
+        <div>
+            <h1>Admin</h1>
+            <span>Hillfort International School</span>
+        </div>
+    </div>
+    <div class="topbar-actions">
+        <span id="adminUserLabel" style="font-size:0.78rem;color:rgba(255,255,255,0.6);font-family:'Poppins',sans-serif"></span>
+        <a href="../index.html" class="topbar-btn topbar-btn-outline" target="_blank">
+            <i class="fas fa-external-link-alt"></i> View Site
+        </a>
+        <button class="topbar-btn topbar-btn-gold" onclick="setPanel('create', document.querySelector('[data-panel=create]')); setTab('news', document.getElementById('activeTab'))">
+            <i class="fas fa-plus"></i> New Post
+        </button>
+        <button class="topbar-btn topbar-btn-outline" onclick="signOut()" title="Sign out">
+            <i class="fas fa-sign-out-alt"></i>
+        </button>
+    </div>
+</header>
+<div class="sidebar-backdrop" id="sidebarBackdrop" onclick="toggleSidebar(false)"></div>
+
+<div class="admin-layout">
+    <!-- SIDEBAR -->
+    <aside class="admin-sidebar" id="adminSidebar">
+        <p class="sidebar-section-label">Posts &amp; Events</p>
+        <a class="sidebar-item active" data-panel="dashboard" onclick="setPanel('dashboard', this)">
+            <i class="fas fa-th-large"></i> Dashboard
+        </a>
+        <a class="sidebar-item" data-panel="create" onclick="setPanel('create', this)">
+            <i class="fas fa-plus-circle"></i> New Post
+        </a>
+        <a class="sidebar-item" data-panel="posts" onclick="setPanel('posts', this)">
+            <i class="fas fa-newspaper"></i> All Posts
+            <span class="sidebar-badge" id="postCount">4</span>
+        </a>
+        <a class="sidebar-item" data-panel="events" onclick="setPanel('events', this)">
+            <i class="fas fa-calendar-alt"></i> Events
+        </a>
+        <a class="sidebar-item" data-panel="popups" onclick="setPanel('popups', this)">
+            <i class="fas fa-bell"></i> Pop-ups
+        </a>
+        <a class="sidebar-item" data-panel="gallery" onclick="setPanel('gallery', this)">
+            <i class="fas fa-images"></i> Gallery Posts
+        </a>
+
+        <p class="sidebar-section-label">Term Calendar</p>
+        <a class="sidebar-item" data-collection="term_dates" onclick="openContent('term_dates', this)">
+            <i class="fas fa-calendar-check"></i> Term Dates
+        </a>
+        <a class="sidebar-item" data-collection="calendar_events" onclick="openContent('calendar_events', this)">
+            <i class="fas fa-star"></i> Key Events
+        </a>
+
+        <p class="sidebar-section-label">Media &amp; Files</p>
+        <a class="sidebar-item" data-collection="media_gallery_items" onclick="openContent('media_gallery_items', this)">
+            <i class="fas fa-photo-video"></i> Photos &amp; Videos
+        </a>
+        <a class="sidebar-item" data-collection="gallery_categories" onclick="openContent('gallery_categories', this)">
+            <i class="fas fa-tags"></i> Gallery Categories
+        </a>
+        <a class="sidebar-item" data-collection="downloads" onclick="openContent('downloads', this)">
+            <i class="fas fa-download"></i> Downloadable Files
+        </a>
+        <a class="sidebar-item" data-collection="download_categories" onclick="openContent('download_categories', this)">
+            <i class="fas fa-tags"></i> Download Categories
+        </a>
+
+        <p class="sidebar-section-label">People &amp; Pages</p>
+        <a class="sidebar-item" data-collection="staff_members" onclick="openContent('staff_members', this)">
+            <i class="fas fa-user-tie"></i> Staff Members
+        </a>
+        <a class="sidebar-item" data-collection="pages" onclick="openContent('pages', this)">
+            <i class="fas fa-file-alt"></i> Site Pages
+        </a>
+        <a class="sidebar-item" data-collection="site_settings" onclick="openContent('site_settings', this)">
+            <i class="fas fa-cog"></i> Site Settings
+        </a>
+
+        <p class="sidebar-section-label">Community</p>
+        <a class="sidebar-item" data-panel="users" onclick="setPanel('users', this)">
+            <i class="fas fa-user-shield"></i> User Approvals
+            <span class="sidebar-badge" id="pendingCount" style="background:#d97706">0</span>
+        </a>
+        <a class="sidebar-item" data-panel="newsletter" onclick="setPanel('newsletter', this)">
+            <i class="fas fa-clock"></i> Scheduled
+        </a>
+        <a class="sidebar-item" href="../index.html">
+            <i class="fas fa-home"></i> Back to Website
+        </a>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="admin-main">
+
+        <!-- DASHBOARD PANEL -->
+        <div class="panel active" id="panel-dashboard">
+            <div class="panel-header">
+                <h2><i class="fas fa-th-large"></i> Dashboard</h2>
+                <button class="btn btn-primary" data-panel="create" onclick="setPanel('create', this)">
+                    <i class="fas fa-plus"></i> New Post
+                </button>
+            </div>
+
+            <div class="stats-row">
+                <div class="stat-card">
+                    <div class="stat-card-icon maroon"><i class="fas fa-newspaper"></i></div>
+                    <div><h4 id="s-news">3</h4><p>News Posts</p></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-icon gold"><i class="fas fa-calendar"></i></div>
+                    <div><h4 id="s-events">2</h4><p>Events</p></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-icon blue"><i class="fas fa-bell"></i></div>
+                    <div><h4 id="s-popups">0</h4><p>Active Pop-ups</p></div></div><div class="stat-card"><div><h4 id="s-galleries">0</h4><p>Galleries</p></div></div><div class="stat-card"><div><h4 id="s-subs">0</h4><p>Subscribers</p></div></div><div class="stat-card stat-card--warn"><div><h4 id="s-pending">0</h4><p>Pending Users</p>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-icon green"><i class="fas fa-eye"></i></div>
+                    <div><h4>6</h4><p>Total Published</p></div>
+                </div>
+            </div>
+
+            <div class="form-card">
+                <div class="form-card-header">
+                    <i class="fas fa-clock"></i>
+                    <h3>Recent Posts</h3>
+                </div>
+                <div class="form-card-body" style="padding:0">
+                    <table class="posts-table">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Type</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="recentPostsBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- CREATE POST PANEL -->
+        <div class="panel" id="panel-create">
+            <div class="panel-header">
+                <h2><i class="fas fa-plus-circle"></i> Create New Post</h2>
+            </div>
+
+            <!-- Post type tabs -->
+            <div class="panel-tabs">
+                <button class="panel-tab active" id="activeTab" onclick="setTab('news',this)">
+                    <i class="fas fa-newspaper"></i> News Post
+                </button>
+                <button class="panel-tab" onclick="setTab('event',this)">
+                    <i class="fas fa-calendar-alt"></i> Event
+                </button>
+                <button class="panel-tab" onclick="setTab('popup',this)">
+                    <i class="fas fa-bell"></i> Pop-up
+                </button>
+                <button class="panel-tab" onclick="setTab('gallery',this)">
+                    <i class="fas fa-images"></i> Gallery
+                </button>
+            </div>
+
+            <!-- NEWS/BLOG FORM -->
+            <div id="form-news" class="tab-form tab-active">
+                <div class="form-card">
+                    <div class="form-card-header"><i class="fas fa-newspaper"></i><h3>News / Blog Post</h3></div>
+                    <div class="form-card-body">
+                        <div class="form-row full"><div class="form-group">
+                            <label>Post Title <span class="req">*</span></label>
+                            <input type="text" id="newsTitle" placeholder="e.g. Summer School 2026 Registration Open">
+                        </div></div>
+                        <div class="form-row three">
+                            <div class="form-group">
+                                <label>Category</label>
+                                <select id="newsCat">
+                                    <option>Academic</option>
+                                    <option>Events</option>
+                                    <option>Celebration</option>
+                                    <option>Culture</option>
+                                    <option>Sports</option>
+                                    <option>Arts</option>
+                                    <option>Announcement</option>
+                                    <option>General</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Author</label>
+                                <input type="text" id="newsAuthor" value="Admin">
+                            </div>
+                            <div class="form-group">
+                                <label>Publish Date</label>
+                                <input type="date" id="newsDate">
+                            </div>
+                        </div>
+                        <div class="form-row full">
+                            <div class="form-group">
+                                <label>Short Summary</label>
+                                <textarea id="newsSummary" rows="2" placeholder="Brief summary shown on news cards (max 160 characters)"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Full Content</label>
+                            <div class="editor-toolbar">
+                                <button class="editor-btn" title="Bold"><b>B</b></button>
+                                <button class="editor-btn" title="Italic"><i>I</i></button>
+                                <button class="editor-btn" title="Underline"><u>U</u></button>
+                                <span class="editor-btn sep">|</span>
+                                <button class="editor-btn" title="H2">H2</button>
+                                <button class="editor-btn" title="H3">H3</button>
+                                <span class="editor-btn sep">|</span>
+                                <button class="editor-btn" title="Bullet List"><i class="fas fa-list-ul"></i></button>
+                                <button class="editor-btn" title="Numbered List"><i class="fas fa-list-ol"></i></button>
+                                <span class="editor-btn sep">|</span>
+                                <button class="editor-btn" title="Link"><i class="fas fa-link"></i></button>
+                                <button class="editor-btn" title="Image"><i class="fas fa-image"></i></button>
+                            </div>
+                            <div class="editor-area" id="newsContent" contenteditable="true" role="textbox" aria-multiline="true" placeholder="Write your full article here..."></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-card">
+                    <div class="form-card-header"><i class="fas fa-image"></i><h3>Featured Image</h3></div>
+                    <div class="form-card-body">
+                        <label class="img-upload-zone" for="newsImg">
+                            <input type="file" id="newsImg" accept="image/*" onchange="previewImg(this,'newsImgPreview')">
+                            <i class="fas fa-cloud-upload-alt" id="newsImgIcon"></i>
+                            <img id="newsImgPreview" style="display:none;max-height:120px;border-radius:8px;margin:0 auto">
+                            <p>Drag &amp; drop image here or <span>click to browse</span></p>
+                            <p style="margin-top:4px;font-size:0.75rem">JPG, PNG, WebP — max 5MB — recommended 1200×630px</p>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-card">
+                    <div class="form-card-header"><i class="fas fa-cog"></i><h3>Publish Settings</h3></div>
+                    <div class="form-card-body">
+                        <div class="form-row three">
+                            <div class="form-group">
+                                <label>Status</label>
+                                <select id="newsStatus">
+                                    <option value="published">Published</option>
+                                    <option value="draft">Draft</option>
+                                    <option value="scheduled">Scheduled</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Show on Homepage</label>
+                                <select id="newsHomepage">
+                                    <option value="yes">Yes — Featured Card</option>
+                                    <option value="carousel">Yes — Carousel Only</option>
+                                    <option value="no">No</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Slider Hero Slide</label>
+                                <select id="newsHero">
+                                    <option value="no">No</option>
+                                    <option value="yes">Yes — Add to Hero</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row full">
+                            <div class="form-group">
+                                <label>Tags (comma separated)</label>
+                                <input type="text" id="newsTags" placeholder="e.g. summer, STEM, 2026">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button class="btn btn-ghost" onclick="savePost('draft')"><i class="fas fa-save"></i> Save Draft</button>
+                        <button class="btn btn-gold ml-auto" onclick="savePost('preview')"><i class="fas fa-eye"></i> Preview</button>
+                        <button class="btn btn-primary" onclick="savePost('published')"><i class="fas fa-paper-plane"></i> Publish</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- EVENT FORM -->
+            <div id="form-event" class="tab-form" style="display:none">
+                <div class="form-card">
+                    <div class="form-card-header"><i class="fas fa-calendar-alt"></i><h3>School Event</h3></div>
+                    <div class="form-card-body">
+                        <div class="form-row full"><div class="form-group">
+                            <label>Event Name <span class="req">*</span></label>
+                            <input type="text" id="eventTitle" placeholder="e.g. Annual Sports Day 2026">
+                        </div></div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Event Date <span class="req">*</span></label>
+                                <input type="date" id="eventDate">
+                            </div>
+                            <div class="form-group">
+                                <label>End Date (optional)</label>
+                                <input type="date" id="eventEndDate">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Time</label>
+                                <input type="time" id="eventTime">
+                            </div>
+                            <div class="form-group">
+                                <label>Venue / Location</label>
+                                <input type="text" id="eventVenue" placeholder="e.g. School Field">
+                            </div>
+                        </div>
+                        <div class="form-row three">
+                            <div class="form-group">
+                                <label>Category</label>
+                                <select id="eventCat">
+                                    <option>Sports</option>
+                                    <option>Academic</option>
+                                    <option>Culture</option>
+                                    <option>Arts</option>
+                                    <option>Parents</option>
+                                    <option>Holiday</option>
+                                    <option>Exam</option>
+                                    <option>General</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Badge Colour</label>
+                                <div class="color-strip" id="eventColorStrip">
+                                    <div class="color-swatch selected" style="background:#800000" data-color="#800000" onclick="selectColor(this,'eventColor')"></div>
+                                    <div class="color-swatch" style="background:#d4a017" data-color="#d4a017" onclick="selectColor(this,'eventColor')"></div>
+                                    <div class="color-swatch" style="background:#2563eb" data-color="#2563eb" onclick="selectColor(this,'eventColor')"></div>
+                                    <div class="color-swatch" style="background:#16a34a" data-color="#16a34a" onclick="selectColor(this,'eventColor')"></div>
+                                    <div class="color-swatch" style="background:#9333ea" data-color="#9333ea" onclick="selectColor(this,'eventColor')"></div>
+                                    <div class="color-swatch" style="background:#ea580c" data-color="#ea580c" onclick="selectColor(this,'eventColor')"></div>
+                                </div>
+                                <input type="hidden" id="eventColor" value="#800000">
+                            </div>
+                            <div class="form-group">
+                                <label>Status</label>
+                                <select id="eventStatus">
+                                    <option>Upcoming</option>
+                                    <option>Ongoing</option>
+                                    <option>Completed</option>
+                                    <option>Cancelled</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row full"><div class="form-group">
+                            <label>Description</label>
+                            <textarea id="eventDesc" rows="3" placeholder="Brief description of the event..."></textarea>
+                        </div></div>
+                    </div>
+                    <div class="form-card-header" style="border-top:1px solid var(--border)"><i class="fas fa-cog"></i><h3>Visibility</h3></div>
+                    <div class="form-card-body">
+                        <div class="toggle-row">
+                            <div><div class="toggle-label">Show on Calendar Page</div><div class="toggle-sub">Appears in term-calendar.html events list</div></div>
+                            <label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+                        </div>
+                        <div class="toggle-row">
+                            <div><div class="toggle-label">Show on News &amp; Events Page</div><div class="toggle-sub">Appears in news-events.html</div></div>
+                            <label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+                        </div>
+                        <div class="toggle-row">
+                            <div><div class="toggle-label">Show on Homepage Carousel</div><div class="toggle-sub">Appears in the scrolling news thumbnails</div></div>
+                            <label class="toggle-switch"><input type="checkbox"><span class="toggle-slider"></span></label>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button class="btn btn-ghost" onclick="savePost('draft')"><i class="fas fa-save"></i> Save Draft</button>
+                        <button class="btn btn-primary ml-auto" onclick="savePost('published')"><i class="fas fa-calendar-check"></i> Add Event</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- POPUP FORM -->
+            <div id="form-popup" class="tab-form" style="display:none">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start">
+                    <div>
+                        <div class="form-card">
+                            <div class="form-card-header"><i class="fas fa-bell"></i><h3>Pop-up Builder</h3></div>
+                            <div class="form-card-body">
+                                <div class="form-row full"><div class="form-group">
+                                    <label>Pop-up Title <span class="req">*</span></label>
+                                    <input type="text" id="popupTitle" placeholder="e.g. Admissions Now Open!" oninput="updatePopupPreview()">
+                                </div></div>
+                                <div class="form-row full"><div class="form-group">
+                                    <label>Message</label>
+                                    <textarea id="popupMsg" rows="3" placeholder="Short message shown in the popup..." oninput="updatePopupPreview()"></textarea>
+                                </div></div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Button Text</label>
+                                        <input type="text" id="popupBtn" value="Learn More" oninput="updatePopupPreview()">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Button Link</label>
+                                        <input type="text" id="popupLink" value="apply.html">
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Show After (seconds)</label>
+                                        <input type="number" id="popupDelay" value="3" min="0" max="30">
+                                        <span class="hint">0 = immediately on page load</span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Show On</label>
+                                        <select id="popupPage">
+                                            <option value="all">All Pages</option>
+                                            <option value="index">Homepage Only</option>
+                                            <option value="admission">Admission Pages</option>
+                                            <option value="news">News &amp; Events Page</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-row full"><div class="form-group">
+                                    <label>Expires On (optional)</label>
+                                    <input type="date" id="popupExpiry">
+                                    <span class="hint">Leave blank to show indefinitely</span>
+                                </div></div>
+                            </div>
+                            <div class="form-card-header" style="border-top:1px solid var(--border)"><i class="fas fa-cog"></i><h3>Settings</h3></div>
+                            <div class="form-card-body">
+                                <div class="toggle-row">
+                                    <div><div class="toggle-label">Active</div><div class="toggle-sub">Pop-up shows to visitors</div></div>
+                                    <label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+                                </div>
+                                <div class="toggle-row">
+                                    <div><div class="toggle-label">Show Once Per Session</div><div class="toggle-sub">Suppress after user closes it</div></div>
+                                    <label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+                                </div>
+                                <div class="toggle-row">
+                                    <div><div class="toggle-label">Allow Dismissal</div><div class="toggle-sub">Show close (×) button on popup</div></div>
+                                    <label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+                                </div>
+                            </div>
+                            <div class="form-actions">
+                                <button class="btn btn-ghost btn-sm" onclick="savePost('draft')">Save Draft</button>
+                                <button class="btn btn-primary ml-auto" onclick="savePost('published')"><i class="fas fa-paper-plane"></i> Activate Pop-up</button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Live preview -->
+                    <div>
+                        <p style="font-size:0.8rem;font-weight:700;color:var(--text-light);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;font-family:'Poppins',sans-serif">Live Preview</p>
+                        <div class="popup-preview">
+                            <div class="popup-box">
+                                <button class="popup-close"><i class="fas fa-times"></i></button>
+                                <h3 id="prev-title">Admissions Now Open!</h3>
+                                <p id="prev-msg">We are accepting applications for the 2026/2027 academic year. Book a tour or apply online today.</p>
+                                <a id="prev-btn" href="#" class="popup-btn">Learn More</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GALLERY FORM -->
+            <div id="form-gallery" class="tab-form" style="display:none">
+                <div class="form-card">
+                    <div class="form-card-header"><i class="fas fa-images"></i><h3>Gallery / Photo Post</h3></div>
+                    <div class="form-card-body">
+                        <div class="form-row full"><div class="form-group">
+                            <label>Gallery Title <span class="req">*</span></label>
+                            <input type="text" id="galleryTitle" placeholder="e.g. Ankara Day 2026 Highlights">
+                        </div></div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Event Date</label>
+                                <input type="date" id="galleryDate">
+                            </div>
+                            <div class="form-group">
+                                <label>Album Category</label>
+                                <select id="galleryCat">
+                                    <option>Events</option>
+                                    <option>Celebrations</option>
+                                    <option>Academic</option>
+                                    <option>Sports</option>
+                                    <option>Arts</option>
+                                    <option>School Life</option>
+                                    <option>Staff</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row full"><div class="form-group">
+                            <label>Caption / Description</label>
+                            <textarea id="galleryCaption" rows="2" placeholder="Short description for the album..."></textarea>
+                        </div></div>
+                        <div class="form-group">
+                            <label>Upload Photos</label>
+                            <label class="img-upload-zone" for="galleryImgs" style="min-height:120px">
+                                <input type="file" id="galleryImgs" accept="image/*" multiple onchange="countFiles(this)">
+                                <i class="fas fa-images"></i>
+                                <p>Click to select multiple photos</p>
+                                <p id="galleryFileCount" style="margin-top:4px;font-size:0.78rem;color:var(--primary);font-weight:700"></p>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-card-header" style="border-top:1px solid var(--border)"><i class="fas fa-cog"></i><h3>Visibility</h3></div>
+                    <div class="form-card-body">
+                        <div class="toggle-row">
+                            <div><div class="toggle-label">Show in Media Gallery</div></div>
+                            <label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+                        </div>
+                        <div class="toggle-row">
+                            <div><div class="toggle-label">Feature on Homepage Hero</div></div>
+                            <label class="toggle-switch"><input type="checkbox"><span class="toggle-slider"></span></label>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button class="btn btn-ghost" onclick="savePost('draft')">Save Draft</button>
+                        <button class="btn btn-primary ml-auto" onclick="savePost('published')"><i class="fas fa-upload"></i> Publish Gallery</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ALL POSTS PANEL -->
+        <div class="panel" id="panel-posts">
+            <div class="panel-header">
+                <h2><i class="fas fa-newspaper"></i> All Posts</h2>
+                <button class="btn btn-primary" data-panel="create" onclick="setPanel('create', this)">
+                    <i class="fas fa-plus"></i> New Post
+                </button>
+            </div>
+            <div class="posts-header">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search posts..." id="searchInput" oninput="filterPosts()">
+                </div>
+                <select class="filter-select" id="typeFilter" onchange="filterPosts()">
+                    <option value="all">All Types</option>
+                    <option value="news">News</option>
+                    <option value="event">Event</option>
+                    <option value="popup">Pop-up</option>
+                    <option value="gallery">Gallery</option>
+                </select>
+                <select class="filter-select" id="statusFilter" onchange="filterPosts()">
+                    <option value="all">All Status</option>
+                    <option value="published">Published</option>
+                    <option value="draft">Draft</option>
+                    <option value="scheduled">Scheduled</option>
+                </select>
+            </div>
+            <div class="form-card" style="overflow:hidden">
+                <table class="posts-table" id="postsTable">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Type</th>
+                            <th>Category</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="allPostsBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- EVENTS PANEL -->
+        <div class="panel" id="panel-events">
+            <div class="panel-header">
+                <h2><i class="fas fa-calendar-alt"></i> Events</h2>
+                <button class="btn btn-primary" onclick="setPanel('create'); setPanel('events', null); setTab('event', document.querySelectorAll('.panel-tab')[1])">
+                    <i class="fas fa-plus"></i> New Event
+                </button>
+            </div>
+            <p style="color:var(--text-light);margin-bottom:18px;font-size:0.9rem">Manage school events that appear on the calendar and events pages.</p>
+            <div class="form-card" style="overflow:hidden">
+                <table class="posts-table">
+                    <thead><tr><th>Event</th><th>Date</th><th>Venue</th><th>Category</th><th>Status</th><th>Actions</th></tr></thead>
+                    <tbody id="eventsBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- POP-UPS PANEL -->
+        <div class="panel" id="panel-popups">
+            <div class="panel-header">
+                <h2><i class="fas fa-bell"></i> Pop-up Manager</h2>
+                <button class="btn btn-primary" onclick="setPanel('create'); setTab('popup', document.querySelectorAll('.panel-tab')[2])">
+                    <i class="fas fa-plus"></i> New Pop-up
+                </button>
+            </div>
+            <p style="color:var(--text-light);margin-bottom:18px;font-size:0.9rem">Control which pop-ups appear on your website.</p>
+            <div id="popupsList"></div>
+        </div>
+
+        <!-- GALLERY PANEL -->
+        <div class="panel" id="panel-gallery">
+            <div class="panel-header">
+                <h2><i class="fas fa-images"></i> Gallery Posts</h2>
+                <button class="btn btn-primary" onclick="setPanel('create'); setTab('gallery', document.querySelectorAll('.panel-tab')[3])">
+                    <i class="fas fa-plus"></i> New Album
+                </button>
+            </div>
+            <p style="color:var(--text-light);font-size:0.9rem">Photo galleries published to the media-gallery.html page.</p>
+        </div>
+
+        <!-- SCHEDULED PANEL -->
+        <div class="panel" id="panel-schedule">
+            <div class="panel-header">
+                <h2><i class="fas fa-clock"></i> Scheduled Posts</h2>
+            </div>
+            <p style="color:var(--text-light);font-size:0.9rem">Posts with a future publish date will appear here.</p>
+        </div>
+
+        <!-- ── USER APPROVALS PANEL ── -->
+        <div class="panel" id="panel-users">
+            <div class="panel-header">
+                <h2><i class="fas fa-user-shield"></i> User Approvals</h2>
+                <p style="color:var(--text-light);font-size:0.88rem;margin-top:4px">
+                    Approve or reject <strong>Post Admin</strong> accounts and <strong>Parent / Guest Portal</strong> registrations.
+                    Accounts only gain access once approved here.
+                </p>
+                <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
+                    <button class="user-filter-btn" data-filter="all" onclick="loadUsers('all')" id="uf-all" style="padding:6px 14px;border-radius:8px;border:1.5px solid var(--primary-color);background:var(--primary-color);color:#fff;font-family:'Poppins',sans-serif;font-size:0.74rem;font-weight:700;cursor:pointer">
+                        <i class="fas fa-users"></i> All
+                    </button>
+                    <button class="user-filter-btn" data-filter="pending" onclick="loadUsers('pending')" id="uf-pending" style="padding:6px 14px;border-radius:8px;border:1.5px solid var(--border);background:#fff;color:var(--text-light);font-family:'Poppins',sans-serif;font-size:0.74rem;font-weight:700;cursor:pointer">
+                        <i class="fas fa-hourglass-half"></i> Pending
+                    </button>
+                    <button class="user-filter-btn" data-filter="approved" onclick="loadUsers('approved')" id="uf-admin" style="padding:6px 14px;border-radius:8px;border:1.5px solid var(--border);background:#fff;color:var(--text-light);font-family:'Poppins',sans-serif;font-size:0.74rem;font-weight:700;cursor:pointer">
+                        <i class="fas fa-shield-alt"></i> Admin
+                    </button>
+                    <button class="user-filter-btn" data-filter="parent" onclick="loadUsers('parent')" id="uf-parent" style="padding:6px 14px;border-radius:8px;border:1.5px solid var(--border);background:#fff;color:var(--text-light);font-family:'Poppins',sans-serif;font-size:0.74rem;font-weight:700;cursor:pointer">
+                        <i class="fas fa-user-friends"></i> Parents
+                    </button>
+                    <button class="user-filter-btn" data-filter="guest" onclick="loadUsers('guest')" id="uf-guest" style="padding:6px 14px;border-radius:8px;border:1.5px solid var(--border);background:#fff;color:var(--text-light);font-family:'Poppins',sans-serif;font-size:0.74rem;font-weight:700;cursor:pointer">
+                        <i class="fas fa-user"></i> Guests
+                    </button>
+                </div>
+            </div>
+            <div id="usersContainer"></div>
+        </div>
+
+
+        <!-- ── NEWSLETTER PANEL ── -->
+        <div class="panel" id="panel-newsletter">
+            <div class="panel-header">
+                <h2><i class="fas fa-newspaper"></i> Newsletter</h2>
+                <p style="color:var(--text-light);font-size:0.88rem;margin-top:4px">
+                    Compose and send newsletters to all subscribers. View and manage your subscriber list.
+                </p>
+            </div>
+
+            <!-- Compose -->
+            <div class="form-card" style="margin-bottom:24px">
+                <div class="form-card-header"><i class="fas fa-pen-nib"></i><h3>Compose Newsletter</h3></div>
+                <div class="form-card-body">
+                    <div class="form-field">
+                        <label>Subject Line <span class="req">*</span></label>
+                        <input type="text" id="nlSubject" placeholder="e.g. Hillfort School Update — March 2026">
+                    </div>
+                    <div class="form-field">
+                        <label>Preview Text <small style="color:#94a3b8">(shown in email clients before opening)</small></label>
+                        <input type="text" id="nlPreview" placeholder="A brief preview of what's inside…">
+                    </div>
+                    <div class="form-field">
+                        <label>Content <span class="req">*</span></label>
+                        <div class="editor-toolbar">
+                            <button type="button" onclick="document.execCommand('bold')" title="Bold"><b>B</b></button>
+                            <button type="button" onclick="document.execCommand('italic')" title="Italic"><i>I</i></button>
+                            <button type="button" onclick="document.execCommand('underline')" title="Underline"><u>U</u></button>
+                            <button type="button" onclick="document.execCommand('insertUnorderedList')" title="List">≡</button>
+                            <button type="button" onclick="document.execCommand('createLink',false,prompt('URL:'))" title="Link">🔗</button>
+                        </div>
+                        <div class="editor-area" id="nlContent" contenteditable="true" role="textbox" aria-multiline="true" placeholder="Write your newsletter content here…" style="min-height:200px"></div>
+                    </div>
+                    <div class="form-actions">
+                        <button class="btn btn-ghost" onclick="document.getElementById('nlContent').innerHTML='';document.getElementById('nlSubject').value=''">
+                            <i class="fas fa-eraser"></i> Clear
+                        </button>
+                        <button id="nlSendBtn" class="btn btn-primary ml-auto" onclick="sendNewsletter()">
+                            <i class="fas fa-paper-plane"></i> Send to All Subscribers
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Subscriber List -->
+            <div class="form-card">
+                <div class="form-card-header" style="justify-content:space-between;flex-wrap:wrap;gap:12px">
+                    <div style="display:flex;align-items:center;gap:10px">
+                        <i class="fas fa-users"></i>
+                        <h3>Subscribers <span id="subCount" style="background:#80000018;color:#800000;padding:2px 10px;border-radius:20px;font-size:.8rem;margin-left:4px">0</span>
+                        </h3>
+                    </div>
+                    <div style="display:flex;gap:8px">
+                        <button class="sub-filter-btn active" data-filter="subscribed" onclick="loadSubscribers('subscribed')"
+                                style="padding:5px 12px;border-radius:8px;border:1.5px solid var(--primary-color);background:var(--primary-color);color:#fff;font-size:.74rem;font-weight:700;cursor:pointer">
+                            Active
+                        </button>
+                        <button class="sub-filter-btn" data-filter="unsubscribed" onclick="loadSubscribers('unsubscribed')"
+                                style="padding:5px 12px;border-radius:8px;border:1.5px solid var(--border);background:#fff;color:var(--text-light);font-size:.74rem;font-weight:700;cursor:pointer">
+                            Unsubscribed
+                        </button>
+                    </div>
+                </div>
+                <div id="subscribersContainer" style="padding:0 24px 24px">
+                    <div style="text-align:center;padding:32px;color:#94a3b8">Click Newsletter in the sidebar to load subscribers</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CONTENT ADMIN PANEL (site_settings, term_dates, calendar_events, gallery,
+             downloads, staff, pages) — mount point for openContent()/renderContentPanel() -->
+        <div class="panel" id="panel-content"></div>
+
+    </main>
+</div>
+
+<!-- Toast Container -->
+<div class="toast-container" id="toastEl"></div>
+
+<script>
+'use strict';
+
+// ── CONSTANTS ────────────────────────────────────────────────────────────────
+var JWT_KEY  = 'hillfort_admin_jwt';
+var API      = { posts: '/api/posts', users: '/api/admin-users' };
+var _adminName  = '';
+var _editingId  = null;
+var _curPanel   = 'dashboard';
+var _curFilter  = 'all';
+var _userFilter = 'all';
+var _subFilter  = 'subscribed';
+var _posts      = [];
+var _users      = [];
+var _subs       = [];
+
+// ── AUTH HEADER ──────────────────────────────────────────────────────────────
+function authHeader() {
+    var tok = localStorage.getItem(JWT_KEY);
+    return { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + tok };
+}
+
+// ── XSS ESCAPE ───────────────────────────────────────────────────────────────
+function esc(s) {
+    return String(s == null ? '' : s)
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+// ── TOAST ─────────────────────────────────────────────────────────────────────
+// Appends a new toast into the fixed #toastEl container (never overwrites the
+// container's own class, so its position:fixed styling stays intact) and lets
+// several stack at once instead of one overwriting another.
+function toast(msg, type) {
+    var container = document.getElementById('toastEl');
+    if (!container) return;
+    var t = document.createElement('div');
+    t.className = 'toast' + (type ? ' ' + type : ' success');
+    t.innerHTML = '<i class="fas fa-' + (type === 'warning' ? 'exclamation-triangle' : 'check-circle') + '"></i> ' + esc(msg);
+    container.appendChild(t);
+    setTimeout(function() { t.remove(); }, 3600);
+}
+
+// ── API WRAPPER ──────────────────────────────────────────────────────────────
+function api(endpoint, body) {
+    return fetch(endpoint, {
+        method:  'POST',
+        headers: authHeader(),
+        body:    JSON.stringify(body),
+    }).then(function(r) {
+        if (r.status === 401) { signOut(); return { ok: false, msg: 'Session expired.' }; }
+        return r.json();
+    });
+}
+
+function apiGet(endpoint, params) {
+    var q = new URLSearchParams(params || {}).toString();
+    return fetch(endpoint + (q ? '?' + q : ''), {
+        headers: authHeader(),
+    }).then(function(r) {
+        if (r.status === 401) { signOut(); return { ok: false, posts: [] }; }
+        return r.json();
+    });
+}
+
+// ── SIGN OUT ──────────────────────────────────────────────────────────────────
+function signOut() {
+    if (!confirm('Sign out of Post Admin?')) return;
+    fetch('/api/admin-logout', { method: 'POST', headers: authHeader() })
+        .finally(function() {
+            localStorage.removeItem(JWT_KEY);
+            window.location.replace('../secure-admin-2026/');
+        });
+}
+
+// ── MOBILE SIDEBAR TOGGLE ────────────────────────────────────────────────────
+function toggleSidebar(force) {
+    var sidebar  = document.getElementById('adminSidebar');
+    var backdrop = document.getElementById('sidebarBackdrop');
+    var open = typeof force === 'boolean' ? force : !sidebar.classList.contains('open');
+    sidebar.classList.toggle('open', open);
+    backdrop.classList.toggle('open', open);
+}
+
+// ── PANEL NAVIGATION ─────────────────────────────────────────────────────────
+function setPanel(name, sidebarEl) {
+    _curPanel = name;
+    document.querySelectorAll('.panel').forEach(function(p) { p.classList.remove('active'); });
+    document.querySelectorAll('.sidebar-item').forEach(function(s) { s.classList.remove('active'); });
+    var panel = document.getElementById('panel-' + name);
+    if (panel) panel.classList.add('active');
+    if (sidebarEl) sidebarEl.classList.add('active');
+    if (window.innerWidth <= 900) toggleSidebar(false);
+
+    if (name === 'dashboard')   loadDashboard();
+    if (name === 'create')      { _editingId = null; resetForm(); }
+    if (name === 'posts')       loadPosts();
+    if (name === 'events')      loadPosts('event');
+    if (name === 'gallery')     loadPosts('gallery');
+    if (name === 'popups')      loadPosts('popup');
+    if (name === 'users')       loadUsers();
+    if (name === 'newsletter')  { loadSubscribers(); }
+}
+
+// ── TAB SWITCHING (create form) ───────────────────────────────────────────────
+function setTab(name, btn) {
+    document.querySelectorAll('.tab-form').forEach(function(f) {
+        f.classList.remove('tab-active');
+        f.style.display = 'none';
+    });
+    document.querySelectorAll('.panel-tab').forEach(function(b) { b.classList.remove('active'); });
+    var form = document.getElementById('form-' + name);
+    if (form) { form.classList.add('tab-active'); form.style.display = ''; }
+    if (btn && btn.classList) btn.classList.add('active');
+}
+
+function selectColor(el, targetInputId) {
+    var strip = el.closest ? el.closest('.color-strip') : el.parentNode;
+    if (strip) strip.querySelectorAll('.color-swatch').forEach(function(s) { s.classList.remove('selected'); });
+    el.classList.add('selected');
+    var input = document.getElementById(targetInputId);
+    if (input) input.value = el.dataset.color || el.style.backgroundColor;
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// DASHBOARD
+// ══════════════════════════════════════════════════════════════════════════════
+function loadDashboard() {
+    api(API.posts, { action: 'stats' }).then(function(d) {
+        if (!d.ok) return;
+        setText('s-news',     d.news);
+        setText('s-events',   d.events);
+        setText('s-popups',   d.popups || 0);
+        setText('s-galleries',d.galleries || 0);
+        setText('s-pending',  d.pendingUsers || 0);
+        setText('s-subs',     d.subscribers || 0);
+
+        var badge = document.getElementById('pendingBadge');
+        if (badge) {
+            badge.textContent = d.pendingUsers || '';
+            badge.style.display = d.pendingUsers > 0 ? 'inline-flex' : 'none';
+        }
+    });
+
+    // Recent posts
+    apiGet(API.posts, { limit: 8 }).then(function(d) {
+        var body = document.getElementById('recentPostsBody');
+        if (!body) return;
+        if (!d.posts || !d.posts.length) {
+            body.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#94a3b8;padding:20px">No posts yet</td></tr>';
+            return;
+        }
+        body.innerHTML = d.posts.map(function(p) {
+            return '<tr>' +
+                '<td><strong>' + esc(p.title) + '</strong></td>' +
+                '<td>' + typeBadge(p.type) + '</td>' +
+                '<td>' + statusBadge(p.status) + '</td>' +
+                '<td style="color:#64748b;font-size:.82rem">' + fmtDate(p.publish_date || p.created_at) + '</td>' +
+                '<td><button class="row-btn" onclick="openEdit(' + p.id + ')"><i class="fas fa-pen"></i></button>' +
+                    '<button class="row-btn row-btn-del" onclick="deletePost(' + p.id + ')"><i class="fas fa-trash"></i></button></td>' +
+                '</tr>';
+        }).join('');
+    });
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// POSTS LIST
+// ══════════════════════════════════════════════════════════════════════════════
+function loadPosts(typeFilter) {
+    var params = { limit: 100 };
+    if (typeFilter) params.type = typeFilter;
+    if (_curFilter !== 'all') params.status = _curFilter;
+
+    var tbody = document.getElementById('allPostsBody');
+    if (tbody) tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:#94a3b8"><i class="fas fa-spinner fa-spin"></i> Loading…</td></tr>';
+
+    apiGet(API.posts, params).then(function(d) {
+        _posts = d.posts || [];
+        renderPostsTable(_posts, tbody);
+    });
+}
+
+function renderPostsTable(posts, tbody) {
+    if (!tbody) tbody = document.getElementById('allPostsBody');
+    if (!tbody) return;
+    if (!posts.length) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:32px;color:#94a3b8">No posts found</td></tr>';
+        return;
+    }
+    tbody.innerHTML = posts.map(function(p) {
+        return '<tr>' +
+            '<td><strong style="font-size:.9rem">' + esc(p.title) + '</strong>' +
+                '<div style="font-size:.75rem;color:#94a3b8;margin-top:2px">' + esc(p.category || '') + '</div></td>' +
+            '<td>' + typeBadge(p.type) + '</td>' +
+            '<td>' + statusBadge(p.status) + '</td>' +
+            '<td style="color:#64748b;font-size:.82rem">' + esc(p.author || 'Admin') + '</td>' +
+            '<td style="color:#64748b;font-size:.82rem">' + fmtDate(p.publish_date || p.created_at) + '</td>' +
+            '<td style="white-space:nowrap">' +
+                '<button class="row-btn" onclick="openEdit(' + p.id + ')" title="Edit"><i class="fas fa-pen"></i></button>' +
+                (p.status === 'draft'
+                    ? '<button class="row-btn row-btn-ok" onclick="toggleStatus(' + p.id + ',\'published\')" title="Publish"><i class="fas fa-paper-plane"></i></button>'
+                    : '<button class="row-btn" onclick="toggleStatus(' + p.id + ',\'draft\')" title="Unpublish"><i class="fas fa-eye-slash"></i></button>') +
+                '<button class="row-btn row-btn-del" onclick="deletePost(' + p.id + ')" title="Delete"><i class="fas fa-trash"></i></button>' +
+            '</td>' +
+            '</tr>';
+    }).join('');
+}
+
+function filterPosts(status) {
+    _curFilter = status;
+    document.querySelectorAll('.filter-btn').forEach(function(b) {
+        b.classList.toggle('active', b.dataset.filter === status);
+    });
+    loadPosts(
+        _curPanel === 'events'  ? 'event' :
+        _curPanel === 'gallery' ? 'gallery' :
+        _curPanel === 'popups'  ? 'popup' : undefined
+    );
+}
+
+function searchPosts(q) {
+    var filtered = _posts.filter(function(p) {
+        return !q || p.title.toLowerCase().includes(q.toLowerCase());
+    });
+    renderPostsTable(filtered);
+}
+
+function toggleStatus(id, status) {
+    api(API.posts, { action: 'toggle_status', id: id, status: status })
+        .then(function(d) {
+            toast(d.msg || 'Updated', d.ok ? 'success' : 'warning');
+            if (d.ok) loadPosts();
+        });
+}
+
+function deletePost(id) {
+    if (!confirm('Delete this post permanently?')) return;
+    api(API.posts, { action: 'delete', id: id })
+        .then(function(d) {
+            toast(d.msg || 'Deleted', d.ok ? 'warning' : 'error');
+            if (d.ok) { loadDashboard(); loadPosts(); }
+        });
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// CREATE / EDIT FORM
+// ══════════════════════════════════════════════════════════════════════════════
+function openCreate(type) {
+    _editingId = null;
+    setPanel('create', document.querySelector('[onclick*="create"]'));
+    resetForm();
+    var tabMap = { news:0, event:1, popup:2, gallery:3 };
+    var tabs   = document.querySelectorAll('.panel-tab');
+    if (tabs[tabMap[type] || 0]) setTab(type, tabs[tabMap[type] || 0]);
+}
+
+function openEdit(id) {
+    apiGet(API.posts + '?id_filter=true', { limit: 1 }).then(function() {});
+    // Load all posts then find the one
+    apiGet(API.posts, { limit: 500 }).then(function(d) {
+        var p = (d.posts || []).find(function(x) { return x.id === id; });
+        if (!p) { toast('Post not found', 'error'); return; }
+
+        _editingId = id;
+        setPanel('create');
+
+        var tabMap = { news:0, event:1, popup:2, gallery:3 };
+        var tabs   = document.querySelectorAll('.panel-tab');
+        if (tabs[tabMap[p.type] || 0]) setTab(p.type, tabs[tabMap[p.type] || 0]);
+
+        // Populate fields
+        setValue('newsTitle',    p.title);
+        setValue('newsDate',     p.publish_date);
+        setValue('newsCat',      p.category);
+        setValue('newsSummary',  p.summary);
+        setValue('newsAuthor',   p.author);
+        setValue('newsTags',     p.tags);
+        setValue('newsHomepage', p.show_homepage ? 'yes' : 'no');
+        setValue('newsHero',     p.show_hero ? 'yes' : 'no');
+        var ed = document.getElementById('newsContent');
+        if (ed) ed.innerHTML = p.content || '';
+
+        setValue('eventTitle',   p.title);
+        setValue('eventDate',    p.event_date);
+        setValue('eventEndDate', p.event_end_date);
+        setValue('eventTime',    p.event_time);
+        setValue('eventVenue',   p.event_venue);
+        setValue('eventCat',     p.category);
+        setValue('eventDesc',    p.summary);
+
+        setValue('popupTitle',   p.title);
+        setValue('popupMsg',     p.summary);
+        setValue('popupBtn',     p.popup_btn_text);
+        setValue('popupLink',    p.popup_btn_link);
+        setValue('popupExpiry',  p.popup_expires);
+        updatePopupPreview();
+
+        setValue('galleryTitle', p.title);
+        setValue('galleryDate',  p.publish_date);
+        setValue('galleryCat',   p.category);
+
+        // Update button labels
+        document.querySelectorAll('.btn-publish').forEach(function(b) {
+            b.innerHTML = '<i class="fas fa-save"></i> Save Changes';
+        });
+
+        // Show cancel button
+        document.querySelectorAll('.form-actions').forEach(function(fa) {
+            if (!fa.querySelector('.btn-cancel-edit')) {
+                var btn = document.createElement('button');
+                btn.className = 'btn btn-ghost btn-cancel-edit';
+                btn.innerHTML = '<i class="fas fa-times"></i> Cancel';
+                btn.onclick = cancelEdit;
+                fa.insertBefore(btn, fa.firstChild);
+            }
+        });
+
+        toast('Editing: ' + p.title);
+    });
+}
+
+function cancelEdit() {
+    _editingId = null;
+    resetForm();
+    document.querySelectorAll('.btn-cancel-edit').forEach(function(b) { b.remove(); });
+    document.querySelectorAll('.btn-publish').forEach(function(b) {
+        var labels = { news:'<i class="fas fa-paper-plane"></i> Publish',
+                       event:'<i class="fas fa-calendar-check"></i> Add Event',
+                       popup:'<i class="fas fa-paper-plane"></i> Activate Pop-up',
+                       gallery:'<i class="fas fa-upload"></i> Publish Gallery' };
+        var t = (b.closest('.tab-form') || {id:''}).id.replace('form-','');
+        b.innerHTML = labels[t] || '<i class="fas fa-paper-plane"></i> Publish';
+    });
+}
+
+function resetForm() {
+    document.querySelectorAll('.tab-form input:not([type=checkbox]):not([type=file])').forEach(function(i) {
+        if (i.id !== 'newsAuthor') i.value = '';
+    });
+    document.querySelectorAll('.tab-form textarea, .tab-form select').forEach(function(e) {
+        if (e.tagName === 'SELECT') e.selectedIndex = 0;
+        else e.value = '';
+    });
+    var ed = document.getElementById('newsContent');
+    if (ed) ed.innerHTML = '';
+}
+
+function savePost(status) {
+    var activeForm = document.querySelector('.tab-form.tab-active');
+    if (!activeForm) return;
+    var formType = activeForm.id.replace('form-', '');
+
+    var title = '';
+    if (formType === 'news')    title = (document.getElementById('newsTitle')?.value    || '').trim();
+    else if (formType === 'event')   title = (document.getElementById('eventTitle')?.value  || '').trim();
+    else if (formType === 'popup')   title = (document.getElementById('popupTitle')?.value  || '').trim();
+    else if (formType === 'gallery') title = (document.getElementById('galleryTitle')?.value || '').trim();
+
+    if (!title) { toast('Please enter a title', 'warning'); return; }
+
+    var resolvedStatus = status === 'draft' ? 'draft'
+        : formType === 'popup' ? 'active' : 'published';
+
+    var postData = {
+        action:    _editingId !== null ? 'update' : 'create',
+        id:        _editingId,
+        title,
+        type:      formType,
+        status:    resolvedStatus,
+        category:  document.getElementById('newsCat')?.value
+                || document.getElementById('eventCat')?.value
+                || document.getElementById('galleryCat')?.value || '',
+        summary:   document.getElementById('newsSummary')?.value
+                || document.getElementById('eventDesc')?.value
+                || document.getElementById('popupMsg')?.value || '',
+        content:   document.getElementById('newsContent')?.innerHTML || '',
+        author:    document.getElementById('newsAuthor')?.value || _adminName || 'Admin',
+        publish_date: document.getElementById('newsDate')?.value
+                   || document.getElementById('galleryDate')?.value
+                   || new Date().toISOString().split('T')[0],
+        tags:      document.getElementById('newsTags')?.value || '',
+        show_homepage: document.getElementById('newsHomepage')?.value === 'yes',
+        show_hero:     document.getElementById('newsHero')?.value === 'yes',
+        // event fields
+        event_date:     document.getElementById('eventDate')?.value || null,
+        event_end_date: document.getElementById('eventEndDate')?.value || null,
+        event_time:     document.getElementById('eventTime')?.value || null,
+        event_venue:    document.getElementById('eventVenue')?.value || '',
+        // popup fields
+        popup_btn_text: document.getElementById('popupBtn')?.value || 'Learn More',
+        popup_btn_link: document.getElementById('popupLink')?.value || '',
+        popup_expires:  document.getElementById('popupExpiry')?.value || null,
+    };
+
+    var saveBtn = activeForm.querySelector('.btn-publish');
+    var origHTML = saveBtn ? saveBtn.innerHTML : '';
+    if (saveBtn) { saveBtn.disabled = true; saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving…'; }
+
+    api(API.posts, postData).then(function(d) {
+        if (saveBtn) { saveBtn.disabled = false; saveBtn.innerHTML = origHTML; }
+        if (d.ok) {
+            toast(d.msg || (_editingId ? 'Post updated!' : 'Post published!'), 'success');
+            _editingId = null;
+            cancelEdit();
+            loadDashboard();
+        } else {
+            toast(d.msg || 'Save failed', 'error');
+        }
+    }).catch(function() {
+        if (saveBtn) { saveBtn.disabled = false; saveBtn.innerHTML = origHTML; }
+        toast('Network error', 'error');
+    });
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// USERS
+// ══════════════════════════════════════════════════════════════════════════════
+function loadUsers(filter) {
+    if (filter) _userFilter = filter;
+    document.querySelectorAll('.user-filter-btn').forEach(function(b) {
+        b.classList.toggle('active', b.dataset.filter === _userFilter);
+    });
+    var container = document.getElementById('usersContainer');
+    if (container) container.innerHTML = '<div style="text-align:center;padding:32px;color:#94a3b8"><i class="fas fa-spinner fa-spin"></i> Loading users…</div>';
+
+    api(API.users, { action: 'list_users', filter: _userFilter })
+        .then(function(d) {
+            _users = d.users || [];
+            renderUsers(_users, container);
+        });
+}
+
+function renderUsers(users, container) {
+    if (!container) container = document.getElementById('usersContainer');
+    if (!container) return;
+    if (!users.length) {
+        container.innerHTML = '<div style="text-align:center;padding:48px;color:#94a3b8"><i class="fas fa-users" style="font-size:2rem;margin-bottom:12px;display:block"></i>No users found</div>';
+        return;
+    }
+    container.innerHTML = users.map(function(u) {
+        var name = esc((u.fname || '') + ' ' + (u.lname || '')).trim() || esc(u.email);
+        var statusColor = u.approved === true ? '#16a34a' : u.approved === false ? '#dc2626' : '#d97706';
+        var statusText  = u.approved === true ? 'Approved' : u.approved === false ? 'Rejected' : 'Pending';
+        return '<div class="user-card">' +
+            '<div class="user-avatar">' + name.charAt(0).toUpperCase() + '</div>' +
+            '<div class="user-info">' +
+                '<div class="user-name">' + name + '</div>' +
+                '<div class="user-email">' + esc(u.email) + '</div>' +
+                '<div style="margin-top:6px;font-size:.75rem;display:flex;gap:8px;flex-wrap:wrap">' +
+                    '<span class="user-badge">' + esc(u.role || 'parent') + '</span>' +
+                    '<span class="user-badge" style="background:' + statusColor + '22;color:' + statusColor + '">' + statusText + '</span>' +
+                    '<span class="user-badge">' + esc(u.provider || 'email') + '</span>' +
+                '</div>' +
+            '</div>' +
+            '<div class="user-actions">' +
+                (u.approved !== true  ? '<button class="row-btn row-btn-ok" onclick="approveUser(' + u.id + ')" title="Approve"><i class="fas fa-check"></i> Approve</button>' : '') +
+                (u.approved !== false ? '<button class="row-btn row-btn-del" onclick="rejectUser(' + u.id + ')" title="Reject"><i class="fas fa-ban"></i> Reject</button>' : '') +
+                '<button class="row-btn" onclick="deleteUser(' + u.id + ')" title="Delete" style="color:#94a3b8"><i class="fas fa-trash"></i></button>' +
+            '</div>' +
+            '</div>';
+    }).join('');
+}
+
+function approveUser(id) {
+    if (!confirm('Approve this user? They will receive an email notification.')) return;
+    api(API.users, { action: 'approve', id: id }).then(function(d) {
+        toast(d.msg || 'Approved', d.ok ? 'success' : 'error');
+        if (d.ok) loadUsers();
+    });
+}
+
+function rejectUser(id) {
+    var reason = prompt('Reason for rejection (optional):') || '';
+    api(API.users, { action: 'reject', id: id, reason: reason }).then(function(d) {
+        toast(d.msg || 'Rejected', d.ok ? 'warning' : 'error');
+        if (d.ok) loadUsers();
+    });
+}
+
+function deleteUser(id) {
+    if (!confirm('Permanently delete this user? This cannot be undone.')) return;
+    api(API.users, { action: 'delete_user', id: id }).then(function(d) {
+        toast(d.msg || 'Deleted', d.ok ? 'warning' : 'error');
+        if (d.ok) loadUsers();
+    });
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// NEWSLETTER
+// ══════════════════════════════════════════════════════════════════════════════
+function loadSubscribers(filter) {
+    if (filter) _subFilter = filter;
+    document.querySelectorAll('.sub-filter-btn').forEach(function(b) {
+        b.classList.toggle('active', b.dataset.filter === _subFilter);
+    });
+    var container = document.getElementById('subscribersContainer');
+    if (container) container.innerHTML = '<div style="text-align:center;padding:24px;color:#94a3b8"><i class="fas fa-spinner fa-spin"></i> Loading…</div>';
+
+    api(API.users, { action: 'list_subscribers', filter: _subFilter, per_page: 100 })
+        .then(function(d) {
+            _subs = d.subscribers || [];
+            renderSubscribers(_subs, d.total || 0);
+        });
+}
+
+function renderSubscribers(subs, total) {
+    var container = document.getElementById('subscribersContainer');
+    if (!container) return;
+    setText('subCount', total);
+    if (!subs.length) {
+        container.innerHTML = '<div style="text-align:center;padding:32px;color:#94a3b8">No subscribers found</div>';
+        return;
+    }
+    container.innerHTML = '<table class="posts-table" style="margin-top:0"><thead><tr>' +
+        '<th>Email</th><th>Name</th><th>Type</th><th>Subscribed</th></tr></thead><tbody>' +
+        subs.map(function(s) {
+            return '<tr>' +
+                '<td>' + esc(s.email) + '</td>' +
+                '<td>' + esc(s.name || '—') + '</td>' +
+                '<td>' + esc(s.subscriber_type || 'Subscriber') + '</td>' +
+                '<td style="font-size:.8rem;color:#64748b">' + fmtDate(s.subscribed_at) + '</td>' +
+                '</tr>';
+        }).join('') +
+        '</tbody></table>';
+}
+
+function sendNewsletter() {
+    var subject  = (document.getElementById('nlSubject')?.value || '').trim();
+    var content  = document.getElementById('nlContent')?.innerHTML || '';
+    var preview  = (document.getElementById('nlPreview')?.value || '').trim();
+
+    if (!subject) { toast('Please enter a subject line', 'warning'); return; }
+    if (!content || content === '<br>' || content.trim() === '') { toast('Please enter newsletter content', 'warning'); return; }
+    if (!confirm('Send this newsletter to all active subscribers?\n\nSubject: ' + subject)) return;
+
+    var btn = document.getElementById('nlSendBtn');
+    var orig = btn ? btn.innerHTML : '';
+    if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending…'; }
+
+    api(API.users, {
+        action: 'send_newsletter',
+        subject: subject,
+        html: content,
+        preview_text: preview,
+    }).then(function(d) {
+        if (btn) { btn.disabled = false; btn.innerHTML = orig; }
+        toast(d.msg || (d.ok ? 'Sent!' : 'Failed'), d.ok ? 'success' : 'error');
+        if (d.ok) {
+            document.getElementById('nlSubject').value = '';
+            document.getElementById('nlContent').innerHTML = '';
+            if (document.getElementById('nlPreview')) document.getElementById('nlPreview').value = '';
+        }
+    }).catch(function() {
+        if (btn) { btn.disabled = false; btn.innerHTML = orig; }
+        toast('Network error', 'error');
+    });
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// POPUP PREVIEW
+// ══════════════════════════════════════════════════════════════════════════════
+function updatePopupPreview() {
+    var title = document.getElementById('popupTitle')?.value || 'Popup Title';
+    var msg   = document.getElementById('popupMsg')?.value   || 'Your message here…';
+    var btn   = document.getElementById('popupBtn')?.value   || 'Learn More';
+    var pt = document.getElementById('prev-title');
+    var pm = document.getElementById('prev-msg');
+    var pb = document.getElementById('prev-btn');
+    if (pt) pt.textContent = title;
+    if (pm) pm.textContent = msg;
+    if (pb) pb.textContent = btn;
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════════════════════════════════════════
+function setText(id, val) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = val;
+}
+
+function setValue(id, val) {
+    var el = document.getElementById(id);
+    if (!el || val == null) return;
+    if (el.type === 'checkbox') el.checked = !!val;
+    else el.value = val;
+}
+
+function fmtDate(d) {
+    if (!d) return '—';
+    var dt = new Date(d);
+    return isNaN(dt) ? d : dt.toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' });
+}
+
+function typeBadge(type) {
+    var colors = { news:'#2563eb', event:'#7c3aed', popup:'#d97706', gallery:'#059669' };
+    var icons  = { news:'newspaper', event:'calendar-alt', popup:'comment-dots', gallery:'images' };
+    var c = colors[type] || '#64748b';
+    return '<span style="background:' + c + '18;color:' + c + ';padding:2px 8px;border-radius:20px;font-size:.72rem;font-weight:600;white-space:nowrap">' +
+           '<i class="fas fa-' + (icons[type]||'file') + '" style="margin-right:3px"></i>' + (type||'post') + '</span>';
+}
+
+function statusBadge(s) {
+    var map = {
+        published: ['#16a34a', 'Published'],
+        active:    ['#16a34a', 'Active'],
+        draft:     ['#64748b', 'Draft'],
+        scheduled: ['#2563eb', 'Scheduled'],
+        archived:  ['#94a3b8', 'Archived'],
+    };
+    var v = map[s] || ['#94a3b8', s || '—'];
+    return '<span style="background:' + v[0] + '18;color:' + v[0] + ';padding:2px 8px;border-radius:20px;font-size:.72rem;font-weight:600">' + v[1] + '</span>';
+}
+
+function previewImg(input, previewId) {
+    var preview = document.getElementById(previewId);
+    if (!preview || !input.files[0]) return;
+    var reader = new FileReader();
+    reader.onload = function(e) {
+        preview.src = e.target.result;
+        preview.style.display = 'block';
+    };
+    reader.readAsDataURL(input.files[0]);
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', function() {
+    // Get admin name from JWT
+    var tok = localStorage.getItem(JWT_KEY);
+    if (tok) {
+        try {
+            var payload = JSON.parse(atob(tok.split('.')[1]));
+            _adminName = payload.name || payload.email || 'Admin';
+            var authorInput = document.getElementById('newsAuthor');
+            if (authorInput) authorInput.value = _adminName;
+        } catch(e) {}
+    }
+
+    // Wire sidebar items
+    document.querySelectorAll('.sidebar-item[data-panel]').forEach(function(el) {
+        el.addEventListener('click', function() {
+            setPanel(this.dataset.panel, this);
+        });
+    });
+
+    // Set first active
+    var firstActive = document.querySelector('.sidebar-item.active');
+    if (!firstActive) {
+        var first = document.querySelector('.sidebar-item[data-panel]');
+        if (first) first.classList.add('active');
+    }
+
+    loadDashboard();
+});
+</script>
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     CONTENT ADMIN — site_settings, term_dates, calendar_events, gallery,
+     downloads, staff, pages. Merged in from the former content-admin.html;
+     reuses esc()/toast()/authHeader()/JWT_KEY/signOut() defined above.
+     ═══════════════════════════════════════════════════════════════════════ -->
+<script>
+function openContent(key, el) {
+    setPanel('content', el);
+    selectCollection(key, el);
+}
+
+async function apiCall(payload) {
+    var res = await fetch('/api/admin?action=content', {
+        method: 'POST', headers: authHeader(), body: JSON.stringify(payload),
+    });
+    var json = await res.json();
+    if (!json.ok) throw new Error(json.msg || 'Request failed');
+    return json;
+}
+
+// ── Collection definitions — drives the entire list+form UI ────────────────
+var COLLECTIONS = {
+    site_settings: {
+        label: 'Site Settings', icon: 'fa-cog', singleton: true,
+        fields: [
+            { key: 'phone_href', label: 'Phone (machine format for tel: links)', type: 'text', placeholder: '+2349130267145' },
+            { key: 'phone_display', label: 'Phone (human-readable)', type: 'text', placeholder: '+234 (913) 026-7145' },
+            { key: 'email', label: 'Email', type: 'text' },
+            { key: 'address', label: 'Address', type: 'text' },
+            { key: 'facebook_url', label: 'Facebook URL', type: 'text' },
+            { key: 'instagram_url', label: 'Instagram URL', type: 'text' },
+            { key: 'whatsapp_url', label: 'WhatsApp URL', type: 'text' },
+            { key: 'footer_description', label: 'Footer Description', type: 'textarea' },
+            { key: 'youtube_live_video_id', label: 'YouTube Live Video ID/URL', type: 'text', hint: 'Leave blank when not streaming' },
+            { key: 'youtube_live_expiry', label: 'Live Banner Expires At', type: 'datetime-local' },
+        ],
+    },
+    term_dates: {
+        label: 'Term Dates', icon: 'fa-calendar-check',
+        fields: [
+            { key: 'term', label: 'Term Name', type: 'text', placeholder: 'e.g. Autumn Term 2026' },
+            { key: 'start_date', label: 'Start Date', type: 'date' },
+            { key: 'end_date', label: 'End Date', type: 'date' }
+        ]
+    },
+    calendar_events: {
+        label: 'Key Events', icon: 'fa-star',
+        fields: [
+            { key: 'title', label: 'Event Title', type: 'text' },
+            { key: 'date', label: 'Event Date', type: 'date' }
+        ]
+    },
+    media_gallery_items: {
+        label: 'Photos & Videos', icon: 'fa-photo-video',
+        fields: [
+            { key: 'title', label: 'Media Title', type: 'text' },
+            { key: 'url', label: 'URL', type: 'text' }
+        ]
+    },
+    gallery_categories: {
+        label: 'Gallery Categories', icon: 'fa-tags',
+        fields: [
+            { key: 'name', label: 'Category Name', type: 'text' }
+        ]
+    },
+    downloads: {
+        label: 'Downloadable Files', icon: 'fa-download',
+        fields: [
+            { key: 'title', label: 'File Name', type: 'text' },
+            { key: 'file_url', label: 'File URL', type: 'text' }
+        ]
+    },
+    download_categories: {
+        label: 'Download Categories', icon: 'fa-tags',
+        fields: [
+            { key: 'name', label: 'Category Name', type: 'text' }
+        ]
+    },
+    staff_members: {
+        label: 'Staff Members', icon: 'fa-user-tie',
+        fields: [
+            { key: 'name', label: 'Full Name', type: 'text' },
+            { key: 'role', label: 'Role / Position', type: 'text' }
+        ]
+    },
+    pages: {
+        label: 'Site Pages', icon: 'fa-file-alt',
+        fields: [
+            { key: 'title', label: 'Page Title', type: 'text' },
+            { key: 'slug', label: 'URL Slug', type: 'text' }
+        ]
+    }
+};
+
+function selectCollection(key, el) {
+    var col = COLLECTIONS[key];
+    if (!col) return;
+    var container = document.getElementById('panel-content');
+    if (container) {
+        container.innerHTML = '<div class="panel-header">' +
+            '<h2><i class="fas ' + col.icon + '"></i> ' + esc(col.label) + '</h2>' +
+            '</div><div class="form-card"><div class="form-card-body">' +
+            '<p style="color:var(--text-light);font-size:0.9rem">Manage ' + esc(col.label) + ' here. Module ready.</p>' +
+            '</div></div>';
+    }
+}
+</script>
+</body>
+</html>

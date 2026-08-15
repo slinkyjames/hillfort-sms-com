@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="apple-touch-icon" sizes="180x180" href="../assets/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32"  href="../assets/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16"  href="../assets/images/favicon-16x16.png">
+    <link rel="manifest" href="../assets/images/site.webmanifest">
+    <title>Parent Portal — Hillfort International School</title>
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Nunito:wght@300;400;600;700;800&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://www.google.com/recaptcha/api.js?render=6Le0HYgsAAAAAEtcpW448qhPRAUumZqovGyA-kSa" async defer></script>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --maroon:    #800000;
+            --maroon-dk: #580000;
+            --gold:      #d4a017;
+            --bg:        #fdf6ef;
+            --white:     #fff;
+            --text:      #1a1a2e;
+            --muted:     #5a6070;
+            --border:    #e2e8f0;
+            --red:       #dc2626;
+            --green:     #16a34a;
+            --orange:    #d97706;
+            --radius:    12px;
+            --shadow:    0 4px 24px rgba(0,0,0,0.10);
+            --shadow-lg: 0 16px 56px rgba(0,0,0,0.18);
+        }
+        body { font-family:'Nunito',sans-serif; background:var(--bg); min-height:100vh; }
+
+        /* ── FULL-WIDTH LAYOUT ── */
+        .portal-wrap { min-height:100vh; background:var(--bg); display:flex; flex-direction:column; }
+
+        /* Top header bar */
+        .portal-header {
+            background:linear-gradient(135deg,var(--maroon-dk),var(--maroon));
+            padding:18px 24px 16px;
+            display:flex; align-items:center; justify-content:space-between;
+            box-shadow:0 2px 12px rgba(0,0,0,0.2);
+        }
+        .portal-header-logo { height:54px; width:auto; display:block; }
+        .portal-header-back {
+            display:inline-flex; align-items:center; gap:7px;
+            color:rgba(255,255,255,.65); font-size:.78rem;
+            font-family:'Poppins',sans-serif; text-decoration:none; transition:color .2s;
+        }
+        .portal-header-back:hover { color:var(--gold); }
+
+        /* Centre the card */
+        .portal-main { flex:1; display:flex; align-items:center; justify-content:center; padding:36px 20px; }
+        .portal-card { width:100%; max-width:500px; background:var(--white); border-radius:20px; box-shadow:var(--shadow-lg); overflow:hidden; }
+
+        /* Tabs */
+        .portal-tabs{display:flex;border-bottom:2px solid var(--border);}
+        .p-tab{flex:1;padding:15px;text-align:center;font-family:'Poppins',sans-serif;font-size:.82rem;font-weight:700;color:var(--muted);cursor:pointer;border:none;background:#f8fafc;transition:all .2s;letter-spacing:.3px;}
+        .p-tab.active{color:var(--maroon);background:var(--white);border-bottom:3px solid var(--maroon);margin-bottom:-2px;}
+        .p-tab:hover:not(.active){color:var(--maroon);background:var(--white);}
+
+        /* Panels */
+        .p-panel{display:none;padding:30px 34px 26px;}
+        .p-panel.active{display:block;}
+        .p-panel h2{font-family:'Cinzel',serif;font-size:1.25rem;color:var(--maroon);margin-bottom:4px;}
+        .p-panel .sub{font-size:.8rem;color:var(--muted);margin-bottom:22px;line-height:1.6;}
+
+        /* Fields */
+        .field{margin-bottom:14px;}
+        .field label{display:block;font-size:.72rem;font-weight:700;font-family:'Poppins',sans-serif;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;}
+        .iw{position:relative;}
+        .iw i{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:.85rem;}
+        .field input,.field select{width:100%;padding:10px 11px 10px 34px;border:1.5px solid var(--border);border-radius:9px;font-size:.86rem;font-family:'Nunito',sans-serif;color:var(--text);background:var(--bg);transition:border-color .2s,box-shadow .2s;outline:none;}
+        .field input:focus,.field select:focus{border-color:var(--maroon);box-shadow:0 0 0 3px rgba(128,0,0,.08);background:var(--white);}
+        .field input.error{border-color:var(--red);}
+        .field-row{display:grid;grid-template-columns:1fr 1fr;gap:11px;}
+
+        /* Role pills */
+        .role-pills{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:14px;}
+        .role-pill{border:2px solid var(--border);border-radius:10px;padding:10px 8px;cursor:pointer;text-align:center;transition:all .2s;}
+        .role-pill.active{border-color:var(--maroon);background:#fff5f5;}
+        .role-pill i{display:block;font-size:1.25rem;margin-bottom:3px;color:var(--muted);}
+        .role-pill.active i{color:var(--maroon);}
+        .role-pill span{font-size:.74rem;font-weight:700;font-family:'Poppins',sans-serif;color:var(--muted);}
+        .role-pill.active span{color:var(--maroon);}
+
+        /* reCAPTCHA */
+
+
+        /* Buttons */
+        .btn-portal{width:100%;padding:12px;background:linear-gradient(135deg,var(--maroon),var(--maroon-dk));color:#fff;border:none;border-radius:10px;font-size:.88rem;font-weight:700;font-family:'Poppins',sans-serif;cursor:pointer;transition:all .22s;box-shadow:0 4px 16px rgba(128,0,0,.28);display:flex;align-items:center;justify-content:center;gap:8px;}
+        .btn-portal:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(128,0,0,.38);}
+        .btn-portal:active{transform:translateY(0);}
+        .btn-portal:disabled{opacity:.55;cursor:not-allowed;transform:none;}
+
+        /* Messages */
+        .msg{border-radius:9px;padding:9px 13px;font-size:.8rem;font-weight:600;margin-bottom:13px;display:none;align-items:center;gap:8px;}
+        .msg.show{display:flex;}
+        .msg.err{background:#fef2f2;border:1px solid #fecaca;color:#991b1b;}
+        .msg.ok{background:#f0fdf4;border:1px solid #bbf7d0;color:#166534;}
+
+        /* Text link buttons */
+        .txt-btn{background:none;border:none;color:var(--maroon);font-weight:700;cursor:pointer;font-size:.78rem;font-family:'Poppins',sans-serif;padding:0;}
+
+        /* OTP Screen */
+        .otp-screen,.pending-screen{display:none;padding:30px 34px;}
+        .otp-screen.active,.pending-screen.active{display:block;}
+        .otp-digits{display:flex;gap:7px;justify-content:center;margin:18px 0;}
+        .otp-digit{width:46px;height:54px;border:2px solid var(--border);border-radius:9px;text-align:center;font-size:1.35rem;font-weight:700;font-family:'Poppins',sans-serif;color:var(--maroon);outline:none;transition:border-color .2s,box-shadow .2s;}
+        .otp-digit:focus{border-color:var(--maroon);box-shadow:0 0 0 3px rgba(128,0,0,.1);}
+        .otp-meta{text-align:center;font-size:.78rem;color:var(--muted);margin-bottom:12px;}
+        .otp-resend{background:none;border:none;color:var(--maroon);font-weight:700;font-family:'Poppins',sans-serif;font-size:.78rem;cursor:pointer;padding:0;}
+        .otp-resend:disabled{color:var(--muted);cursor:not-allowed;}
+
+        /* Pending Screen */
+        .pend-icon{width:76px;height:76px;background:linear-gradient(135deg,#fff7ed,#fef3c7);border:3px solid var(--orange);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;}
+        .pend-icon i{font-size:1.9rem;color:var(--orange);}
+        .pend-steps{background:#f8fafc;border-radius:10px;padding:12px 16px;margin:14px 0 12px;text-align:left;}
+        .pend-step{display:flex;align-items:center;gap:9px;padding:5px 0;font-size:.8rem;color:var(--text);}
+        .pend-step i{width:18px;text-align:center;}
+        .step-done{color:var(--green)!important;}
+        .step-wait{color:var(--orange)!important;}
+        .step-lock{color:var(--muted)!important;}
+
+        /* ── DASHBOARD ── */
+        /* Top bar */
+        .dash-topbar{background:linear-gradient(135deg,var(--maroon),var(--maroon-dk));padding:16px 22px;display:flex;align-items:center;gap:14px;border-radius:0;}
+        .dash-av-wrap{position:relative;flex-shrink:0;}
+        .dash-av{width:54px;height:54px;border-radius:50%;border:2.5px solid rgba(212,160,23,.7);object-fit:cover;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;font-size:1.3rem;font-weight:700;font-family:'Cinzel',serif;color:var(--gold);overflow:hidden;cursor:pointer;}
+        .dash-av img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+        .dash-av-badge{position:absolute;bottom:0;right:0;width:18px;height:18px;background:var(--gold);border-radius:50%;border:2px solid var(--maroon);display:flex;align-items:center;justify-content:center;cursor:pointer;}
+        .dash-av-badge i{font-size:.55rem;color:var(--maroon-dk);}
+        .dash-name-block{flex:1;min-width:0;}
+        .dash-name-block h3{font-family:'Cinzel',serif;font-size:.92rem;color:#fff;margin-bottom:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+        .dash-name-block p{font-size:.7rem;color:rgba(255,255,255,.65);font-family:'Poppins',sans-serif;}
+        .dash-topbar-logout{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.8);border-radius:7px;padding:5px 11px;font-size:.72rem;font-weight:700;font-family:'Poppins',sans-serif;cursor:pointer;transition:all .2s;white-space:nowrap;}
+        .dash-topbar-logout:hover{background:rgba(255,255,255,.2);color:#fff;}
+        /* Nav tabs */
+        .dash-nav{display:flex;border-bottom:2px solid var(--border);background:#f8fafc;overflow-x:auto;scrollbar-width:none;}
+        .dash-nav::-webkit-scrollbar{display:none;}
+        .dash-tab{flex-shrink:0;padding:10px 14px;font-family:'Poppins',sans-serif;font-size:.72rem;font-weight:700;color:var(--muted);cursor:pointer;border:none;background:none;border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .2s;display:flex;align-items:center;gap:5px;letter-spacing:.2px;white-space:nowrap;}
+        .dash-tab.active{color:var(--maroon);border-bottom-color:var(--maroon);background:#fff;}
+        .dash-tab:hover:not(.active){color:var(--maroon);background:rgba(128,0,0,.04);}
+        /* Tab panels */
+        .dash-panel{display:none;padding:20px 22px 24px;}
+        .dash-panel.active{display:block;}
+        /* Profile panel */
+        .profile-photo-section{text-align:center;margin-bottom:22px;}
+        .profile-photo-ring{width:90px;height:90px;border-radius:50%;border:3px solid var(--maroon);margin:0 auto 10px;overflow:hidden;background:#f4f4f8;position:relative;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+        .profile-photo-ring img{width:100%;height:100%;object-fit:cover;}
+        .profile-photo-ring .ph-overlay{position:absolute;inset:0;background:rgba(128,0,0,.55);border-radius:50%;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;}
+        .profile-photo-ring:hover .ph-overlay{opacity:1;}
+        .profile-photo-ring .ph-overlay i{color:#fff;font-size:1.1rem;}
+        .ph-initials{font-size:2rem;font-weight:700;font-family:'Cinzel',serif;color:var(--maroon);}
+        .ph-label{font-size:.72rem;color:var(--muted);font-family:'Poppins',sans-serif;}
+        .ph-change-btn{font-size:.72rem;font-weight:700;color:var(--maroon);font-family:'Poppins',sans-serif;background:none;border:none;cursor:pointer;padding:0;margin-top:2px;}
+        input.ph-file-input{display:none;}
+        /* Profile fields */
+        .profile-fields{display:flex;flex-direction:column;gap:11px;}
+        .pf-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+        .pf-group{display:flex;flex-direction:column;gap:4px;}
+        .pf-group label{font-size:.68rem;font-weight:700;font-family:'Poppins',sans-serif;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;}
+        .pf-group input{padding:9px 11px;border:1.5px solid var(--border);border-radius:8px;font-size:.82rem;font-family:'Nunito',sans-serif;color:var(--text);background:var(--bg);outline:none;transition:border-color .2s;}
+        .pf-group input:focus{border-color:var(--maroon);background:#fff;}
+        .pf-group input[readonly]{background:#f1f5f9;color:var(--muted);cursor:default;}
+        .btn-save-profile{width:100%;margin-top:14px;padding:11px;background:linear-gradient(135deg,var(--maroon),var(--maroon-dk));color:#fff;border:none;border-radius:9px;font-size:.84rem;font-weight:700;font-family:'Poppins',sans-serif;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:7px;}
+        .btn-save-profile:hover{box-shadow:0 6px 18px rgba(128,0,0,.3);transform:translateY(-1px);}
+        /* Stat cards */
+        .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px;}
+        .stat-card{background:var(--bg);border:1.5px solid var(--border);border-radius:11px;padding:14px 16px;display:flex;align-items:center;gap:12px;}
+        .stat-icon{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:.95rem;flex-shrink:0;}
+        .si-maroon{background:#fff0f0;color:var(--maroon);}
+        .si-gold{background:#fefce8;color:#92400e;}
+        .si-blue{background:#eff6ff;color:#1d4ed8;}
+        .si-green{background:#f0fdf4;color:#166534;}
+        .stat-card h4{font-size:1.15rem;font-weight:800;color:var(--text);line-height:1;margin-bottom:2px;}
+        .stat-card p{font-size:.68rem;color:var(--muted);font-family:'Poppins',sans-serif;}
+        /* Info rows */
+        .info-block{background:var(--bg);border:1.5px solid var(--border);border-radius:11px;overflow:hidden;margin-bottom:14px;}
+        .info-block-header{background:#f1f5f9;padding:9px 14px;font-size:.7rem;font-weight:700;font-family:'Poppins',sans-serif;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border);}
+        .info-row{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--border);gap:10px;}
+        .info-row:last-child{border-bottom:none;}
+        .info-label{font-size:.74rem;font-weight:700;color:var(--muted);font-family:'Poppins',sans-serif;flex-shrink:0;}
+        .info-value{font-size:.8rem;color:var(--text);font-family:'Nunito',sans-serif;font-weight:600;text-align:right;word-break:break-all;}
+        .info-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:20px;font-size:.68rem;font-weight:700;font-family:'Poppins',sans-serif;}
+        .ib-green{background:#dcfce7;color:#16a34a;}
+        .ib-orange{background:#fff7ed;color:#c2410c;}
+        .ib-blue{background:#dbeafe;color:#1d4ed8;}
+        /* Pages visited list */
+        .pages-list{display:flex;flex-direction:column;gap:6px;}
+        .page-visit-item{display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--bg);border:1px solid var(--border);border-radius:8px;font-size:.78rem;}
+        .page-visit-item i{color:var(--maroon);width:16px;text-align:center;flex-shrink:0;}
+        .pv-name{flex:1;font-weight:600;color:var(--text);font-family:'Nunito',sans-serif;}
+        .pv-time{font-size:.68rem;color:var(--muted);font-family:'Poppins',sans-serif;white-space:nowrap;}
+        .pv-count{background:#fff0f0;color:var(--maroon);font-size:.65rem;font-weight:700;font-family:'Poppins',sans-serif;padding:2px 7px;border-radius:10px;flex-shrink:0;}
+        /* Downloads list */
+        .dl-list{display:flex;flex-direction:column;gap:6px;}
+        .dl-item{display:flex;align-items:center;gap:10px;padding:9px 12px;background:var(--bg);border:1px solid var(--border);border-radius:8px;}
+        .dl-icon{width:34px;height:34px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0;}
+        .dl-icon-pdf{background:#fef2f2;color:#dc2626;}
+        .dl-icon-img{background:#f0fdf4;color:#16a34a;}
+        .dl-icon-doc{background:#eff6ff;color:#1d4ed8;}
+        .dl-info{flex:1;min-width:0;}
+        .dl-info strong{display:block;font-size:.78rem;color:var(--text);font-family:'Poppins',sans-serif;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+        .dl-info span{font-size:.68rem;color:var(--muted);}
+        .dl-time{font-size:.67rem;color:var(--muted);font-family:'Poppins',sans-serif;white-space:nowrap;}
+        /* Empty states */
+        .empty-state{text-align:center;padding:28px 16px;color:var(--muted);}
+        .empty-state i{font-size:2rem;opacity:.25;display:block;margin-bottom:8px;}
+        .empty-state p{font-size:.8rem;font-weight:600;}
+        /* Links panel */
+        .portal-links{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
+        .p-link{display:flex;flex-direction:column;align-items:center;gap:7px;padding:15px;border-radius:11px;background:var(--bg);border:1.5px solid var(--border);text-decoration:none;color:var(--text);transition:all .2s;text-align:center;}
+        .p-link:hover{border-color:var(--maroon);background:#fff;color:var(--maroon);transform:translateY(-2px);box-shadow:0 4px 14px rgba(128,0,0,.12);}
+        .p-link i{font-size:1.4rem;color:var(--maroon);}
+        .p-link span{font-size:.74rem;font-weight:700;font-family:'Poppins',sans-serif;}
+        .btn-logout{width:100%;margin-top:14px;padding:10px;background:transparent;color:var(--maroon);border:1.5px solid var(--maroon);border-radius:9px;font-size:.82rem;font-weight:700;font-family:'Poppins',sans-serif;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:7px;}
+        .btn-logout:hover{background:#fff5f5;}
+        /* Responsive dash */
+        @media(max-width:400px){
+            .stat-grid,.pf-row{grid-template-columns:1fr;}
+            .dash-panel{padding:16px 14px;}
+        }
+
+        /* Toast */
+        #p-toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(80px);background:rgba(20,20,20,.96);color:#fff;padding:11px 22px;border-radius:10px;font-family:'Poppins',sans-serif;font-size:.82rem;font-weight:600;z-index:99999;display:flex;align-items:center;gap:9px;box-shadow:0 8px 30px rgba(0,0,0,.35);transition:transform .3s,opacity .3s;opacity:0;pointer-events:none;border-left:4px solid var(--gold);}
+        #p-toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
+        #p-toast.ok-t{border-left-color:#22c55e;}
+        #p-toast.err-t{border-left-color:var(--red);}
+
+        /* Responsive */
+        @media(max-width:600px){
+            .portal-header { padding:12px 16px; }
+            .portal-header-logo { height:40px; }
+            .portal-main{padding:20px 12px;}
+            .p-panel,.otp-screen,.pending-screen{padding:22px 18px;}
+            .field-row{grid-template-columns:1fr;}
+        }
+    </style>
+</head>
+<body>
+
+<div class="portal-wrap">
+
+    <!-- ── HEADER ── -->
+    <header class="portal-header">
+        <img src="../assets/images/logo.png" alt="Hillfort International School" class="portal-header-logo">
+        <a href="../index.html" class="portal-header-back">
+            <i class="fas fa-arrow-left"></i> Back to website
+        </a>
+    </header>
+
+    <!-- ── FORM ── -->
+    <main class="portal-main">
+        <div class="portal-card">
+
+            <!-- TABS -->
+            <div class="portal-tabs" id="portalTabs">
+                <button class="p-tab active" id="tab-login" onclick="showTab('login')">
+                    <i class="fas fa-sign-in-alt"></i> Sign In
+                </button>
+                <button class="p-tab" id="tab-reg" onclick="showTab('register')">
+                    <i class="fas fa-user-plus"></i> Register
+                </button>
+            </div>
+
+            <!-- ── SIGN IN ── -->
+            <div class="p-panel active" id="panel-login">
+                <h2>Welcome Back</h2>
+                <p class="sub">Sign in to access protected school resources.</p>
+
+                <div class="msg err" id="login-err"><i class="fas fa-exclamation-circle"></i><span id="login-err-txt"></span></div>
+                <div class="msg ok"  id="login-ok" ><i class="fas fa-check-circle"></i><span id="login-ok-txt"></span></div>
+
+                <div class="field">
+                    <label>Email Address</label>
+                    <div class="iw"><i class="fas fa-envelope"></i>
+                        <input type="email" id="l-email" placeholder="parent@email.com" autocomplete="email">
+                    </div>
+                </div>
+                <div class="field">
+                    <label>Password</label>
+                    <div class="iw"><i class="fas fa-lock"></i>
+                        <input type="password" id="l-pw" placeholder="Your password" autocomplete="current-password"
+                            onkeydown="if(event.key==='Enter')handleLogin()">
+                    </div>
+                </div>
+
+
+
+                <button class="btn-portal" onclick="handleLogin()">
+                    <i class="fas fa-sign-in-alt"></i> Sign In
+                </button>
+
+                <p style="text-align:center;margin-top:13px;font-size:.78rem;color:var(--muted)">
+                    No account? <button class="txt-btn" onclick="showTab('register')">Register here</button>
+                </p>
+            </div>
+
+            <!-- ── REGISTER ── -->
+            <div class="p-panel" id="panel-register">
+                <h2>Create Account</h2>
+                <p class="sub">Register for parent or guest access. All accounts require admin approval before you can sign in.</p>
+
+                <div class="msg err" id="reg-err"><i class="fas fa-exclamation-circle"></i><span id="reg-err-txt"></span></div>
+
+                <!-- Account type -->
+                <div style="margin-bottom:12px">
+                    <label style="display:block;font-size:.72rem;font-weight:700;font-family:'Poppins',sans-serif;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px">Account Type</label>
+                    <div class="role-pills">
+                        <div class="role-pill active" id="rp-parent" onclick="pickRole('parent')">
+                            <i class="fas fa-user-friends"></i><span>Parent / Guardian</span>
+                        </div>
+                        <div class="role-pill" id="rp-guest" onclick="pickRole('guest')">
+                            <i class="fas fa-user"></i><span>Guest / Visitor</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="field-row">
+                    <div class="field"><label>First Name</label>
+                        <div class="iw"><i class="fas fa-user"></i><input type="text" id="r-fname" placeholder="First name"></div>
+                    </div>
+                    <div class="field"><label>Last Name</label>
+                        <div class="iw"><i class="fas fa-user"></i><input type="text" id="r-lname" placeholder="Last name"></div>
+                    </div>
+                </div>
+
+                <div class="field"><label>Email Address</label>
+                    <div class="iw"><i class="fas fa-envelope"></i><input type="email" id="r-email" placeholder="your@email.com"></div>
+                </div>
+
+                <div class="field"><label>Phone Number</label>
+                    <div class="iw"><i class="fas fa-phone"></i><input type="tel" id="r-phone" placeholder="+234 800 000 0000"></div>
+                </div>
+
+                <div class="field" id="child-field">
+                    <label>Child's Full Name <span style="font-weight:400;color:var(--muted)">(optional)</span></label>
+                    <div class="iw"><i class="fas fa-child"></i><input type="text" id="r-child" placeholder="e.g. John Doe"></div>
+                </div>
+
+                <div class="field-row" id="child-extra-fields">
+                    <div class="field"><label>Year Group Applying For</label>
+                        <div class="iw"><i class="fas fa-graduation-cap"></i>
+                            <select id="r-child-grade" style="border:none;background:transparent;width:100%;outline:none;color:var(--text-dark)">
+                                <option value="">Select (optional)</option>
+                                <option>EYFS — Nursery</option>
+                                <option>EYFS — Reception</option>
+                                <option>Primary 1</option><option>Primary 2</option><option>Primary 3</option>
+                                <option>Primary 4</option><option>Primary 5</option><option>Primary 6</option>
+                                <option>JSS 1</option><option>JSS 2</option><option>JSS 3</option>
+                                <option>SSS 1</option><option>SSS 2</option><option>SSS 3</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="field"><label>Intended Entry Date</label>
+                        <div class="iw"><i class="fas fa-calendar-alt"></i><input type="month" id="r-child-entry"></div>
+                    </div>
+                </div>
+
+                <div class="field-row">
+                    <div class="field"><label>Password</label>
+                        <div class="iw"><i class="fas fa-lock"></i><input type="password" id="r-pw" placeholder="Min 8 characters"></div>
+                    </div>
+                    <div class="field"><label>Confirm Password</label>
+                        <div class="iw"><i class="fas fa-lock"></i><input type="password" id="r-pw2" placeholder="Repeat password"></div>
+                    </div>
+                </div>
+
+
+
+                <button class="btn-portal" onclick="handleRegister()">
+                    <i class="fas fa-user-plus"></i> Create Account
+                </button>
+
+                <p style="text-align:center;margin-top:13px;font-size:.78rem;color:var(--muted)">
+                    Already registered? <button class="txt-btn" onclick="showTab('login')">Sign in</button>
+                </p>
+            </div>
+
+            <!-- ── OTP ── -->
+            <div class="otp-screen" id="otp-screen">
+                <div style="text-align:center">
+                    <div style="width:64px;height:64px;background:linear-gradient(135deg,var(--maroon),var(--maroon-dk));border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px">
+                        <i class="fas fa-envelope-open-text" style="color:var(--gold);font-size:1.5rem"></i>
+                    </div>
+                    <h2 style="font-family:'Cinzel',serif;color:var(--maroon);font-size:1.15rem;margin-bottom:5px">Check Your Email</h2>
+                    <p style="font-size:.8rem;color:var(--muted);line-height:1.6">
+                        We sent a 6-digit code to<br>
+                        <strong id="otp-email" style="color:var(--text)"></strong>
+                    </p>
+
+                    <div class="otp-digits">
+                        <input class="otp-digit" maxlength="1" id="d0" oninput="otpMove(this,0)" onkeydown="otpBack(this,0,event)">
+                        <input class="otp-digit" maxlength="1" id="d1" oninput="otpMove(this,1)" onkeydown="otpBack(this,1,event)">
+                        <input class="otp-digit" maxlength="1" id="d2" oninput="otpMove(this,2)" onkeydown="otpBack(this,2,event)">
+                        <input class="otp-digit" maxlength="1" id="d3" oninput="otpMove(this,3)" onkeydown="otpBack(this,3,event)">
+                        <input class="otp-digit" maxlength="1" id="d4" oninput="otpMove(this,4)" onkeydown="otpBack(this,4,event)">
+                        <input class="otp-digit" maxlength="1" id="d5" oninput="otpMove(this,5)" onkeydown="otpBack(this,5,event)">
+                    </div>
+
+                    <div class="msg err" id="otp-err" style="justify-content:center">
+                        <i class="fas fa-exclamation-circle"></i><span id="otp-err-txt"></span>
+                    </div>
+
+                    <div class="otp-meta">
+                        <span id="otp-countdown">Resend in 60s</span>
+                        <button class="otp-resend" id="otp-resend" disabled onclick="resendOtp()">Resend</button>
+                    </div>
+
+                    <button class="btn-portal" onclick="verifyOtp()">
+                        <i class="fas fa-check-circle"></i> Verify Email
+                    </button>
+                </div>
+            </div>
+
+            <!-- ── PENDING ── -->
+            <div class="pending-screen" id="pending-screen">
+                <div style="text-align:center">
+                    <div class="pend-icon"><i class="fas fa-clock"></i></div>
+                    <h2 style="font-family:'Cinzel',serif;color:var(--maroon);font-size:1.15rem;margin-bottom:8px">Account Pending Approval</h2>
+                    <p style="font-size:.82rem;color:var(--muted);line-height:1.7">
+                        Your email is verified. Your account is awaiting admin review before you can access protected pages.
+                    </p>
+                    <div class="pend-steps">
+                        <div class="pend-step"><i class="fas fa-check-circle step-done"></i><span>Account created</span></div>
+                        <div class="pend-step"><i class="fas fa-check-circle step-done"></i><span>Email verified</span></div>
+                        <div class="pend-step"><i class="fas fa-hourglass-half step-wait"></i><strong style="color:var(--orange)">Awaiting admin approval</strong></div>
+                        <div class="pend-step"><i class="fas fa-lock step-lock"></i><span style="color:var(--muted)">Access granted</span></div>
+                    </div>
+                    <p style="font-size:.76rem;color:var(--muted)">You will be notified by email once approved. Usually within 24–48 hours.</p>
+                    <button class="btn-logout" onclick="showTab('login')" style="margin-top:14px">
+                        <i class="fas fa-arrow-left"></i> Back to Sign In
+                    </button>
+                </div>
+            </div>
+
+        </div><!-- /.portal-card -->
+    </main>
+</div>
+
+<div id="p-toast"></div>
+
+<script>
+(function(){
+'use strict';
+
+/* ── CONFIG ──────────────────────────────────────────────── */
+var JWT_KEY     = 'hillfort_parent_jwt';
+var DEV_MODE    = false;
+
+/* ── STATE ───────────────────────────────────────────────── */
+var _role      = 'parent';
+var _pendEmail = '';
+var _cdTimer   = null;
+var _cdSecs    = 60;
+
+/* ── TOAST ───────────────────────────────────────────────── */
+function toast(msg, type) {
+    var el = document.getElementById('p-toast');
+    el.className = 'show ' + (type === 'ok' ? 'ok-t' : type === 'err' ? 'err-t' : '');
+    el.innerHTML = '<i class="fas fa-' + (type==='ok'?'check-circle':type==='err'?'exclamation-circle':'info-circle') + '"></i> ' + msg;
+    clearTimeout(el._t);
+    el._t = setTimeout(function(){ el.className=''; }, 3500);
+}
+
+/* ── reCAPTCHA v3 ────────────────────────────────────────── */
+var RC_SITE_KEY = '6Le0HYgsAAAAAEtcpW448qhPRAUumZqovGyA-kSa';
+function getV3Token(action) {
+    if (DEV_MODE) return Promise.resolve('dev-ok');
+    return new Promise(function(resolve) {
+        if (typeof grecaptcha === 'undefined') { resolve(''); return; }
+        grecaptcha.ready(function() {
+            grecaptcha.execute(RC_SITE_KEY, { action: action }).then(resolve).catch(function(){ resolve(''); });
+        });
+    });
+}
+function getCap()  { return 'v3'; }
+function resetCap() {}
+function capErr()  {}
+
+/* ── TAB / SCREEN NAVIGATION ─────────────────────────────── */
+function showTab(tab) {
+    // Hide OTP/pending screens, show the tabs+panel view
+    document.getElementById('otp-screen').classList.remove('active');
+    document.getElementById('pending-screen').classList.remove('active');
+    document.getElementById('portalTabs').style.display = '';
+
+    var tabId  = tab === 'register' ? 'tab-reg' : 'tab-login';
+    var panelId = 'panel-' + tab;
+    document.querySelectorAll('.p-tab').forEach(function(t){ t.classList.remove('active'); });
+    document.querySelectorAll('.p-panel').forEach(function(p){ p.classList.remove('active'); });
+    var t = document.getElementById(tabId), p = document.getElementById(panelId);
+    if (t) t.classList.add('active');
+    if (p) p.classList.add('active');
+}
+function showScreen(id) {
+    // otp-screen / pending-screen are siblings outside the tab system
+    document.querySelectorAll('.p-panel').forEach(function(p){ p.classList.remove('active'); });
+    document.getElementById('otp-screen').classList.remove('active');
+    document.getElementById('pending-screen').classList.remove('active');
+    document.getElementById('portalTabs').style.display = 'none';
+    var el = document.getElementById(id);
+    if (el) el.classList.add('active');
+}
+
+/* ── ROLE PICKER ─────────────────────────────────────────── */
+function pickRole(r) {
+    _role = r;
+    document.getElementById('rp-parent').className = 'role-pill'+(r==='parent'?' active':'');
+    document.getElementById('rp-guest').className  = 'role-pill'+(r==='guest'?' active':'');
+    document.getElementById('child-field').style.display = (r==='parent')?'':'none';
+    var extra = document.getElementById('child-extra-fields');
+    if (extra) extra.style.display = (r==='parent')?'':'none';
+}
+
+/* ── SHOW MESSAGE ────────────────────────────────────────── */
+function showMsg(containerId, txtId, text) {
+    var box=document.getElementById(containerId), txtEl=document.getElementById(txtId);
+    if (!box||!txtEl) return;
+    txtEl.textContent=text;
+    box.className=box.className.replace(' show','').trim()+' show';
+}
+function hideMsg(id) {
+    var el=document.getElementById(id);
+    if(el) el.className=el.className.replace(' show','').trim();
+}
+
+/* ── VALIDATE EMAIL ──────────────────────────────────────── */
+function validEmail(e){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e); }
+
+/* ══════════════════════════════════════════════════════════
+   LOGIN  →  /api/parent-login
+   ══════════════════════════════════════════════════════════ */
+function handleLogin() {
+    var email = (document.getElementById('l-email').value||'').trim().toLowerCase();
+    var pw    = (document.getElementById('l-pw').value||'').trim();
+    hideMsg('login-err'); hideMsg('login-ok');
+    if (!email||!pw) { showMsg('login-err','login-err-txt','Please enter your email and password.'); return; }
+    if (!validEmail(email)) { showMsg('login-err','login-err-txt','Please enter a valid email address.'); return; }
+
+    var loginBtn = document.querySelector('#panel-login .btn-portal');
+    if (loginBtn) { loginBtn.disabled = true; loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing in…'; }
+
+    fetch('/api/parent-login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email, password: pw }),
+    })
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+        if (loginBtn) { loginBtn.disabled = false; loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In'; }
+
+        if (!d.ok && !d.status) {
+            showMsg('login-err','login-err-txt', d.msg || 'Incorrect email or password.');
+            return;
+        }
+        if (d.status === 'unverified') {
+            _pendEmail = email;
+            triggerOtp(email);
+            showScreen('otp-screen');
+            document.getElementById('otp-email').textContent = email;
+            startCountdown();
+            return;
+        }
+        if (d.status === 'pending') {
+            showScreen('pending-screen');
+            return;
+        }
+        if (d.status === 'approved' && d.token) {
+            localStorage.setItem(JWT_KEY, d.token);
+            showMsg('login-ok','login-ok-txt','Signed in! Redirecting to your dashboard…');
+            setTimeout(function(){ window.location.href = 'dashboard.html'; }, 800);
+            return;
+        }
+        showMsg('login-err','login-err-txt', d.msg || 'Could not sign in. Please try again.');
+    })
+    .catch(function(){
+        if (loginBtn) { loginBtn.disabled = false; loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In'; }
+        showMsg('login-err','login-err-txt','Network error. Please check your connection and try again.');
+    });
+}
+
+/* ══════════════════════════════════════════════════════════
+   REGISTER  →  /api/parent-register
+   ══════════════════════════════════════════════════════════ */
+function handleRegister() {
+    var fname = (document.getElementById('r-fname').value||'').trim();
+    var lname = (document.getElementById('r-lname').value||'').trim();
+    var email = (document.getElementById('r-email').value||'').trim().toLowerCase();
+    var phone = (document.getElementById('r-phone').value||'').trim();
+    var child = (document.getElementById('r-child').value||'').trim();
+    var childGrade = (document.getElementById('r-child-grade')||{}).value || '';
+    var childEntry = (document.getElementById('r-child-entry')||{}).value || '';
+    var pw    = (document.getElementById('r-pw').value||'').trim();
+    var pw2   = (document.getElementById('r-pw2').value||'').trim();
+    hideMsg('reg-err');
+
+    if (!fname||!lname||!email||!pw) { showMsg('reg-err','reg-err-txt','Please fill in all required fields.'); return; }
+    if (!validEmail(email))           { showMsg('reg-err','reg-err-txt','Please enter a valid email address.'); return; }
+    if (pw.length < 8)                { showMsg('reg-err','reg-err-txt','Password must be at least 8 characters.'); return; }
+    if (pw !== pw2)                   { showMsg('reg-err','reg-err-txt','Passwords do not match.'); return; }
+
+    var regBtn = document.querySelector('#panel-register .btn-portal');
+    if (regBtn) { regBtn.disabled = true; regBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating account…'; }
+
+    fetch('/api/parent-register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            fname: fname, lname: lname, email: email, phone: phone,
+            password: pw, role: _role,
+            child_name: _role === 'parent' ? child : '',
+            child_grade: childGrade,
+            intended_entry_date: childEntry,
+        }),
+    })
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+        if (regBtn) { regBtn.disabled = false; regBtn.innerHTML = '<i class="fas fa-user-plus"></i> Create Account'; }
+        if (d.ok) {
+            _pendEmail = email;
+            showScreen('otp-screen');
+            document.getElementById('otp-email').textContent = email;
+            startCountdown();
+            toast(d.msg || 'Account created! Check your email for the code.', 'ok');
+        } else {
+            showMsg('reg-err','reg-err-txt', d.msg || 'Registration failed. Please try again.');
+        }
+    })
+    .catch(function(){
+        if (regBtn) { regBtn.disabled = false; regBtn.innerHTML = '<i class="fas fa-user-plus"></i> Create Account'; }
+        showMsg('reg-err','reg-err-txt','Network error. Please check your connection and try again.');
+    });
+}
+
+/* ══════════════════════════════════════════════════════════
+   OTP
+   ══════════════════════════════════════════════════════════ */
+function triggerOtp(email) {
+    var fd = new FormData();
+    fd.append('email', email);
+    fetch('/api/send-otp', { method: 'POST', body: fd })
+        .then(function(r){ return r.json(); })
+        .then(function(d){
+            if (d.ok) toast('Verification code sent to ' + email, 'ok');
+            else toast('Could not send code: ' + (d.msg || 'Please try again'), 'err');
+        })
+        .catch(function(){ toast('Network error — please try again', 'err'); });
+}
+
+function otpMove(el, idx) {
+    el.value = el.value.replace(/\D/g,'');
+    if (el.value && idx < 5) {
+        var next = document.getElementById('d'+(idx+1));
+        if (next) next.focus();
+    }
+}
+function otpBack(el, idx, e) {
+    if (e.key==='Backspace' && !el.value && idx > 0) {
+        var prev = document.getElementById('d'+(idx-1));
+        if (prev) { prev.value=''; prev.focus(); }
+    }
+}
+function getOtpVal() {
+    var s='';
+    for(var i=0;i<6;i++){ var d=document.getElementById('d'+i); s+=(d?d.value:''); }
+    return s;
+}
+function clearOtp() {
+    for(var i=0;i<6;i++){ var d=document.getElementById('d'+i); if(d) d.value=''; }
+    var first=document.getElementById('d0'); if(first) first.focus();
+}
+
+function verifyOtp() {
+    var entered = getOtpVal();
+    hideMsg('otp-err');
+    if (entered.length < 6) { showMsg('otp-err','otp-err-txt','Please enter all 6 digits.'); return; }
+
+    for (var i=0; i<6; i++) { var d=document.getElementById('d'+i); if(d) d.disabled=true; }
+
+    var fd = new FormData();
+    fd.append('otp', entered);
+    fd.append('email', _pendEmail);
+
+    fetch('/api/verify-otp', { method: 'POST', body: fd })
+        .then(function(r){ return r.json(); })
+        .then(function(d){
+            if (d.ok) {
+                clearInterval(_cdTimer);
+                if (d.approved === true) {
+                    toast('Email verified! Please sign in to continue.', 'ok');
+                    setTimeout(function(){ showTab('login'); document.getElementById('l-email').value = _pendEmail; }, 1100);
+                } else {
+                    toast('Email verified! Your account is awaiting admin approval.', 'ok');
+                    setTimeout(function(){ showScreen('pending-screen'); }, 1100);
+                }
+            } else {
+                showMsg('otp-err','otp-err-txt', d.msg || 'Incorrect code. Please try again.');
+                clearOtp();
+                for (var i=0; i<6; i++) { var d2=document.getElementById('d'+i); if(d2) d2.disabled=false; }
+                var f=document.getElementById('d0'); if(f) f.focus();
+            }
+        })
+        .catch(function(){
+            showMsg('otp-err','otp-err-txt','Network error — please try again.');
+            for (var i=0; i<6; i++) { var d3=document.getElementById('d'+i); if(d3) d3.disabled=false; }
+        });
+}
+
+function resendOtp() {
+    triggerOtp(_pendEmail);
+    clearOtp();
+    startCountdown();
+    toast('New code sent to ' + _pendEmail, 'ok');
+}
+
+function startCountdown() {
+    _cdSecs = 60;
+    var timerEl  = document.getElementById('otp-countdown');
+    var resendBtn = document.getElementById('otp-resend');
+    if (resendBtn) resendBtn.disabled = true;
+    clearInterval(_cdTimer);
+    _cdTimer = setInterval(function(){
+        _cdSecs--;
+        if (timerEl) timerEl.textContent = 'Resend in ' + _cdSecs + 's';
+        if (_cdSecs <= 0) {
+            clearInterval(_cdTimer);
+            if (timerEl) timerEl.textContent = '';
+            if (resendBtn) resendBtn.disabled = false;
+        }
+    }, 1000);
+}
+
+/* ══════════════════════════════════════════════════════════
+   LOGOUT
+   ══════════════════════════════════════════════════════════ */
+function doLogout() {
+    localStorage.removeItem(JWT_KEY);
+    showTab('login');
+    toast('You have been signed out.', 'ok');
+}
+
+/* ── INIT: if already logged in, skip straight to dashboard ── */
+(function init() {
+    pickRole('parent');
+    var token = localStorage.getItem(JWT_KEY);
+    if (token) {
+        fetch('/api/parent-session', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+            body: JSON.stringify({ token: token }),
+        })
+        .then(function(r){ return r.json(); })
+        .then(function(d){
+            if (d.ok) { window.location.replace('dashboard.html'); }
+            else { localStorage.removeItem(JWT_KEY); }
+        })
+        .catch(function(){});
+    }
+
+    var redir = localStorage.getItem('hillfort_auth_redirect');
+    if (redir) {
+        var note = document.createElement('div');
+        note.style.cssText='background:#fff3cd;border:1px solid #fde68a;color:#92400e;padding:8px 13px;border-radius:8px;font-size:.78rem;margin-bottom:12px;font-family:Poppins,sans-serif;font-weight:600;display:flex;align-items:center;gap:7px;';
+        note.innerHTML='<i class="fas fa-lock"></i> Sign in to access the page you requested.';
+        var panel=document.getElementById('panel-login');
+        if(panel) panel.insertBefore(note, panel.firstChild);
+        localStorage.removeItem('hillfort_auth_redirect');
+    }
+})();
+
+/* Expose to HTML onclick */
+window.showTab        = showTab;
+window.pickRole       = pickRole;
+window.handleLogin    = handleLogin;
+window.handleRegister = handleRegister;
+window.otpMove        = otpMove;
+window.otpBack        = otpBack;
+window.verifyOtp      = verifyOtp;
+window.resendOtp      = resendOtp;
+window.doLogout       = doLogout;
+
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+
+# Admin, portal and internal areas — not for indexing
+Disallow: /secure-admin-2026/
+Disallow: /pages/post-admin.html
+Disallow: /pages/parent-portal.html
+Disallow: /backend/
+Disallow: /deploy/
+
+Sitemap: https://www.hillfortintlschool.ng/sitemap.xml
+Sitemap: https://www.hillfortintlschool.ng/pages/sitemap.html

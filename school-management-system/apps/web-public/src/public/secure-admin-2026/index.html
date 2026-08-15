@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="apple-touch-icon" sizes="180x180" href="../assets/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32"  href="../assets/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16"  href="../assets/images/favicon-16x16.png">
+    <link rel="manifest" href="../assets/images/site.webmanifest">
+    <title>Admin Access — Hillfort International School</title>
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Poppins:wght@400;500;600;700&family=Nunito:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- reCAPTCHA v3 — replace SITE_KEY below with your actual v3 site key -->
+    <script src="https://www.google.com/recaptcha/api.js?render=6Le0HYgsAAAAAEtcpW448qhPRAUumZqovGyA-kSa" async defer></script>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --maroon:      #800000;
+            --maroon-dark: #580000;
+            --gold:        #d4a017;
+            --gold-light:  #f5c842;
+            --bg:          #0f0a0a;
+            --card-bg:     #1a1010;
+            --border:      rgba(212,160,23,0.18);
+            --text:        #f0e8e8;
+            --text-muted:  rgba(240,232,232,0.5);
+            --red:         #e53e3e;
+            --green:       #38a169;
+        }
+
+        html, body {
+            min-height: 100vh;
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Subtle animated background */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 70% 50% at 20% 20%, rgba(128,0,0,0.18) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 40% at 80% 80%, rgba(212,160,23,0.07) 0%, transparent 55%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Subtle grid texture */
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+            background-size: 48px 48px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .page-wrap {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 440px;
+            padding: 24px 16px;
+        }
+
+        /* ── CARD ── */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow:
+                0 0 0 1px rgba(128,0,0,0.08),
+                0 32px 64px rgba(0,0,0,0.6),
+                0 0 80px rgba(128,0,0,0.06);
+        }
+
+        /* ── HEADER ── */
+        .card-header {
+            background: linear-gradient(145deg, #1e0a0a, #2a1010);
+            border-bottom: 1px solid var(--border);
+            padding: 28px 36px 24px;
+            text-align: center;
+            position: relative;
+        }
+
+        .card-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+        }
+
+        .header-logo {
+            max-height: 90px;
+            max-width: 220px;
+            width: auto;
+            display: block;
+            margin: 0 auto;
+            filter: drop-shadow(0 4px 16px rgba(0,0,0,0.5));
+        }
+
+        /* ── BODY ── */
+        .card-body {
+            padding: 32px 36px 28px;
+        }
+
+        /* ── FORM FIELDS ── */
+        .field {
+            margin-bottom: 18px;
+        }
+
+        .field label {
+            display: block;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 7px;
+        }
+
+        .input-wrap {
+            position: relative;
+        }
+
+        .input-wrap i.fi {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.88rem;
+            color: var(--text-muted);
+            pointer-events: none;
+            transition: color 0.2s;
+        }
+
+        .input-wrap input {
+            width: 100%;
+            padding: 13px 44px 13px 42px;
+            background: rgba(255,255,255,0.04);
+            border: 1.5px solid rgba(255,255,255,0.1);
+            border-radius: 10px;
+            color: var(--text);
+            font-size: 0.92rem;
+            font-family: 'Nunito', sans-serif;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+        }
+
+        .input-wrap input:focus {
+            border-color: rgba(212,160,23,0.5);
+            box-shadow: 0 0 0 3px rgba(212,160,23,0.08);
+            background: rgba(255,255,255,0.06);
+        }
+
+        .input-wrap input:focus + i.fi,
+        .input-wrap:focus-within i.fi {
+            color: var(--gold);
+        }
+
+        .input-wrap input.error {
+            border-color: rgba(229,62,62,0.6);
+            box-shadow: 0 0 0 3px rgba(229,62,62,0.1);
+        }
+
+        .toggle-pw {
+            position: absolute;
+            right: 13px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 4px;
+            line-height: 1;
+            font-size: 0.88rem;
+            transition: color 0.2s;
+        }
+
+        .toggle-pw:hover { color: var(--gold); }
+
+        .field-error {
+            display: none;
+            font-size: 0.73rem;
+            color: var(--red);
+            margin-top: 5px;
+            font-weight: 600;
+        }
+
+        .field-error.show { display: block; }
+
+        /* ── SUBMIT BUTTON ── */
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--maroon), var(--maroon-dark));
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            font-family: 'Poppins', sans-serif;
+            cursor: pointer;
+            letter-spacing: 0.3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s;
+            box-shadow: 0 4px 16px rgba(128,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.08);
+            margin-top: 6px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-login::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(212,160,23,0.12), transparent);
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .btn-login:hover:not(:disabled)::before { opacity: 1; }
+        .btn-login:hover:not(:disabled) {
+            box-shadow: 0 6px 24px rgba(128,0,0,0.45);
+            transform: translateY(-1px);
+        }
+
+        .btn-login:active:not(:disabled) { transform: translateY(0); }
+
+        .btn-login:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-login.loading i { animation: spin 0.8s linear infinite; }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ── STATUS MESSAGE ── */
+        .status-msg {
+            display: none;
+            padding: 11px 14px;
+            border-radius: 8px;
+            font-size: 0.83rem;
+            font-weight: 600;
+            margin-bottom: 18px;
+            align-items: center;
+            gap: 8px;
+            line-height: 1.45;
+        }
+
+        .status-msg.error {
+            display: flex;
+            background: rgba(229,62,62,0.1);
+            border: 1px solid rgba(229,62,62,0.3);
+            color: #fc8181;
+        }
+
+        .status-msg.success {
+            display: flex;
+            background: rgba(56,161,105,0.1);
+            border: 1px solid rgba(56,161,105,0.3);
+            color: #68d391;
+        }
+
+        /* ── FOOTER ── */
+        .card-footer {
+            padding: 16px 36px 24px;
+            text-align: center;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .card-footer a {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .card-footer a:hover { color: var(--gold); }
+
+
+        /* ── reCAPTCHA wrapper (hidden v3) ── */
+        #rcWrap { display: none; }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 480px) {
+            .card-header, .card-body { padding-left: 24px; padding-right: 24px; }
+            .card-footer { padding-left: 24px; padding-right: 24px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page-wrap">
+    <div class="card">
+
+        <!-- HEADER -->
+        <div class="card-header">
+            <img src="../assets/images/logo.png" alt="Hillfort International School" class="header-logo">
+        </div>
+
+        <!-- BODY -->
+        <div class="card-body">
+
+            <!-- Status message (errors / success) -->
+            <div class="status-msg" id="statusMsg" role="alert">
+                <i class="fas fa-circle-exclamation" id="statusIcon"></i>
+                <span id="statusText"></span>
+            </div>
+
+            <!-- Login form -->
+            <form id="loginForm" novalidate autocomplete="off">
+
+                <div class="field">
+                    <label for="emailInput">School Email</label>
+                    <div class="input-wrap">
+                        <input
+                            type="email"
+                            id="emailInput"
+                            name="email"
+                            placeholder="yourname@hillfortintlschool.ng"
+                            autocomplete="username"
+                            spellcheck="false"
+                            inputmode="email"
+                            required>
+                        <i class="fas fa-envelope fi"></i>
+                    </div>
+                    <div class="field-error" id="emailErr">Please enter your school email address.</div>
+                </div>
+
+                <div class="field">
+                    <label for="passwordInput">Admin Password</label>
+                    <div class="input-wrap">
+                        <input
+                            type="password"
+                            id="passwordInput"
+                            name="password"
+                            placeholder="Enter your admin password"
+                            autocomplete="current-password"
+                            required>
+                        <i class="fas fa-lock fi"></i>
+                        <button type="button" class="toggle-pw" id="togglePw" aria-label="Toggle password visibility" tabindex="-1">
+                            <i class="fas fa-eye" id="eyeIcon"></i>
+                        </button>
+                    </div>
+                    <div class="field-error" id="pwErr">Password is required.</div>
+                </div>
+
+                <!-- Hidden reCAPTCHA v3 badge wrapper -->
+                <div id="rcWrap"></div>
+
+                <button type="submit" class="btn-login" id="loginBtn">
+                    <i class="fas fa-sign-in-alt" id="loginBtnIcon"></i>
+                    <span id="loginBtnText">Sign In to Dashboard</span>
+                </button>
+
+            </form>
+        </div>
+
+        <!-- FOOTER -->
+        <div class="card-footer">
+            <a href="../index.html"><i class="fas fa-arrow-left"></i> Return to main website</a>
+
+
+        </div>
+
+    </div>
+</div>
+
+<script>
+(function () {
+    'use strict';
+
+    // ── reCAPTCHA v3 ──────────────────────────────────────────────────────────
+    // Must match the key in the <script src> tag above.
+    // Replace both with your actual v3 SITE key from console.cloud.google.com
+    var RECAPTCHA_SITE_KEY = '6Le0HYgsAAAAAEtcpW448qhPRAUumZqovGyA-kSa';
+
+    function getRecaptchaToken() {
+        return new Promise(function (resolve) {
+            if (typeof grecaptcha === 'undefined' || !RECAPTCHA_SITE_KEY) {
+                resolve('');
+                return;
+            }
+            grecaptcha.ready(function () {
+                grecaptcha.execute(RECAPTCHA_SITE_KEY, { action: 'admin_login' })
+                    .then(resolve)
+                    .catch(function () { resolve(''); });
+            });
+        });
+    }
+
+    // ── DOM refs ──────────────────────────────────────────────────────────────
+    var form       = document.getElementById('loginForm');
+    var emailInput = document.getElementById('emailInput');
+    var pwInput    = document.getElementById('passwordInput');
+    var loginBtn   = document.getElementById('loginBtn');
+    var loginBtnIcon = document.getElementById('loginBtnIcon');
+    var loginBtnText = document.getElementById('loginBtnText');
+    var statusMsg  = document.getElementById('statusMsg');
+    var statusText = document.getElementById('statusText');
+    var statusIcon = document.getElementById('statusIcon');
+    var emailErr   = document.getElementById('emailErr');
+    var pwErr      = document.getElementById('pwErr');
+    var togglePw   = document.getElementById('togglePw');
+    var eyeIcon    = document.getElementById('eyeIcon');
+
+    // ── Check existing server session ─────────────────────────────────────────
+    // If already logged in, go straight to dashboard
+    // Check for existing JWT
+    var existingTok = localStorage.getItem('hillfort_admin_jwt');
+    if (existingTok) {
+        fetch('/api/admin-session', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + existingTok },
+            body: JSON.stringify({ token: existingTok })
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+            if (d.ok) window.location.replace('../pages/post-admin.html');
+            else localStorage.removeItem('hillfort_admin_jwt');
+        })
+        .catch(function() {});
+    }
+
+    // ── Password toggle ───────────────────────────────────────────────────────
+    togglePw.addEventListener('click', function () {
+        var isText = pwInput.type === 'text';
+        pwInput.type = isText ? 'password' : 'text';
+        eyeIcon.className = isText ? 'fas fa-eye' : 'fas fa-eye-slash';
+    });
+
+    // ── Field error clear on input ────────────────────────────────────────────
+    emailInput.addEventListener('input', function () {
+        emailInput.classList.remove('error');
+        emailErr.classList.remove('show');
+        hideStatus();
+    });
+    pwInput.addEventListener('input', function () {
+        pwInput.classList.remove('error');
+        pwErr.classList.remove('show');
+        hideStatus();
+    });
+
+    // ── Status helpers ────────────────────────────────────────────────────────
+    function showStatus(msg, type) {
+        statusMsg.className = 'status-msg ' + type;
+        statusText.textContent = msg;
+        statusIcon.className = type === 'error'
+            ? 'fas fa-circle-exclamation'
+            : 'fas fa-circle-check';
+    }
+
+    function hideStatus() {
+        statusMsg.className = 'status-msg';
+    }
+
+    function setLoading(loading) {
+        loginBtn.disabled = loading;
+        if (loading) {
+            loginBtnIcon.className = 'fas fa-spinner';
+            loginBtn.classList.add('loading');
+            loginBtnText.textContent = 'Verifying credentials…';
+        } else {
+            loginBtnIcon.className = 'fas fa-sign-in-alt';
+            loginBtn.classList.remove('loading');
+            loginBtnText.textContent = 'Sign In to Dashboard';
+        }
+    }
+
+    // ── Form submit ───────────────────────────────────────────────────────────
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        hideStatus();
+
+        var email    = emailInput.value.trim();
+        var password = pwInput.value;
+        var valid    = true;
+
+        // Client-side validation
+        if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            emailInput.classList.add('error');
+            emailErr.classList.add('show');
+            valid = false;
+        }
+
+        if (!password) {
+            pwInput.classList.add('error');
+            pwErr.classList.add('show');
+            valid = false;
+        }
+
+        if (!valid) return;
+
+        setLoading(true);
+
+        // Get reCAPTCHA token then submit
+        getRecaptchaToken().then(function (rcToken) {
+            var fd = new FormData();
+            fd.append('email',    email);
+            fd.append('password', password);
+            fd.append('token',    rcToken);
+
+            return fetch('/api/admin-login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email:    email,
+                    password: password,
+                    token:    rcToken
+                })
+            });
+        })
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+            if (d.ok) {
+                // Store JWT for session persistence
+                if (d.token) localStorage.setItem('hillfort_admin_jwt', d.token);
+                showStatus('Access granted. Redirecting to dashboard…', 'success');
+                setTimeout(function () {
+                    window.location.replace('../pages/post-admin.html');
+                }, 1200);
+            } else {
+                setLoading(false);
+                showStatus(d.msg || 'Invalid credentials. Please try again.', 'error');
+                pwInput.value = '';
+                pwInput.focus();
+            }
+        })
+        .catch(function () {
+            setLoading(false);
+            showStatus('Network error. Please check your connection and try again.', 'error');
+        });
+    });
+
+    // ── Enter key on email moves to password ──────────────────────────────────
+    emailInput.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') { e.preventDefault(); pwInput.focus(); }
+    });
+
+})();
+</script>
+</body>
+</html>

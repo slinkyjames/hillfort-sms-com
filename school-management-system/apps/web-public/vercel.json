@@ -1,0 +1,49 @@
+{
+  "version": 2,
+  "buildCommand": "npm install",
+  "outputDirectory": "public",
+  "framework": null,
+  "headers": [
+    {
+      "source": "/assets/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+      ]
+    },
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        { "key": "Cache-Control",             "value": "no-store, no-cache" },
+        { "key": "X-Content-Type-Options",    "value": "nosniff" }
+      ]
+    },
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options",  "value": "nosniff" },
+        { "key": "X-Frame-Options",          "value": "SAMEORIGIN" },
+        { "key": "X-XSS-Protection",         "value": "1; mode=block" },
+        { "key": "Referrer-Policy",          "value": "strict-origin-when-cross-origin" },
+        { "key": "Permissions-Policy",       "value": "camera=(), microphone=(), geolocation=()" }
+      ]
+    }
+  ],
+  "rewrites": [
+    { "source": "/",              "destination": "/index.html" },
+    { "source": "/pages/:path*", "destination": "/pages/:path*" },
+
+    { "source": "/api/admin-login",   "destination": "/api/admin?action=login" },
+    { "source": "/api/admin-logout",  "destination": "/api/admin?action=logout" },
+    { "source": "/api/admin-session", "destination": "/api/admin?action=session" },
+    { "source": "/api/admin-users",   "destination": "/api/admin?action=users" },
+
+    { "source": "/api/parent-login",    "destination": "/api/parent?action=login" },
+    { "source": "/api/parent-register", "destination": "/api/parent?action=register" },
+    { "source": "/api/parent-session",  "destination": "/api/parent?action=session" },
+
+    { "source": "/api/send-otp",   "destination": "/api/otp?action=send" },
+    { "source": "/api/verify-otp", "destination": "/api/otp?action=verify" },
+
+    { "source": "/api/:path*",   "destination": "/api/:path*" }
+  ]
+}
