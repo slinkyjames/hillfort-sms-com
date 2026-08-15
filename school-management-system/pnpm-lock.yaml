@@ -24,15 +24,6 @@ importers:
         specifier: workspace:*
         version: link:../../packages/shared-types
 
-  apps/web:
-    dependencies:
-      '@sms/shared-types':
-        specifier: workspace:*
-        version: link:../../packages/shared-types
-      '@sms/ui':
-        specifier: workspace:*
-        version: link:../../packages/ui
-
   apps/web-admin:
     dependencies:
       '@sms/shared-types':
