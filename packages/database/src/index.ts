@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from './generated/client';
 
 // Declare a global variable to store the Prisma instance in development
 const globalForPrisma = global as unknown as { prisma: PrismaClient };
@@ -15,5 +15,5 @@ if (process.env.NODE_ENV !== 'production') {
   globalForPrisma.prisma = prisma;
 }
 
-// Re-export the Prisma client and all generated types for use in other packages
-export * from '@prisma/client';
+// Re-export everything (including the Prisma namespace) from the local generated client
+export * from './generated/client';
