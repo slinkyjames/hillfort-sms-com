@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FormField } from '../components/common/FormField';
+import { FormField } from '../../components/common/FormField';
 
 export const Login: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);

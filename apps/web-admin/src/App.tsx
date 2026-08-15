@@ -5,7 +5,8 @@ import { AdminLayout } from './layouts/AdminLayout';
 import { AuthLayout } from './layouts/AuthLayout';
 import { Dashboard } from './pages/Dashboard';
 import { StudentList } from './pages/students/StudentList';
-import { Login } from './pages/Login';
+// Updated import path to match the actual file location
+import { Login } from './pages/students/Login';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
