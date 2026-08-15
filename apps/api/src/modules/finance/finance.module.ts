@@ -6,7 +6,8 @@ import {
   getStudentFees 
 } from './controllers/finance.controller';
 
-const router = Router();
+// Add the explicit ': Router' type annotation here
+const router: Router = Router();
 
 /**
  * @route   POST /api/finance/invoices
