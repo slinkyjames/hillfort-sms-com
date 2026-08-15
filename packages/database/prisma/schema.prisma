@@ -1,6 +1,6 @@
 datasource db {
   provider = "postgresql"
-  url      = DATABASE_URL
+  url      = env("DATABASE_URL")
 }
 
 generator client {
@@ -29,23 +29,23 @@ enum Term {
 }
 
 model User {
-  id            String    @id @default(uuid())
-  email         String    @unique
-  passwordHash  String
-  firstName     String
-  lastName      String
-  role          Role      @default(STUDENT)
-  isActive      Boolean   @default(true)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  profile       StudentProfile?
-  staffProfile  StaffProfile?
+  id           String          @id @default(uuid())
+  email        String          @unique
+  passwordHash String
+  firstName    String
+  lastName     String
+  role         Role            @default(STUDENT)
+  isActive     Boolean         @default(true)
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+  profile      StudentProfile?
+  staffProfile StaffProfile?
 }
 
 model StudentProfile {
   id              String         @id @default(uuid())
   userId          String         @unique
-  user            User           @dependents(fields: [userId], references: [id])
+  user            User           @relation(fields: [userId], references: [id])
   admissionNumber String         @unique
   curriculum      CurriculumType @default(HYBRID)
   currentClass    String         // e.g., "JSS 2" or "Year 8"
@@ -57,44 +57,44 @@ model StudentProfile {
 }
 
 model StaffProfile {
-  id         String   @id @default(uuid())
-  userId     String   @unique
-  user       User     @relation(fields: [userId], references: [id])
-  staffId    String   @unique
+  id         String @id @default(uuid())
+  userId     String @unique
+  user       User   @relation(fields: [userId], references: [id])
+  staffId    String @unique
   department String
 }
 
 model GradeRecord {
-  id              String         @id @default(uuid())
-  studentId       String
-  student         StudentProfile @relation(fields: [studentId], references: [id])
-  subject         String
-  term            Term
-  session         String         // e.g., "2026/2027"
-  caScore         Float?         // Continuous Assessment (e.g., Nigerian 40%)
-  examScore       Float?         // Exam Score (e.g., Nigerian 60%)
-  britishGrade    String?        // e.g., "A*", "B", or Checkpoint level
-  curriculumType  CurriculumType
-  createdAt       DateTime       @default(now())
+  id             String         @id @default(uuid())
+  studentId      String
+  student        StudentProfile @relation(fields: [studentId], references: [id])
+  subject        String
+  term           Term
+  session        String         // e.g., "2026/2027"
+  caScore        Float?         // Continuous Assessment (e.g., Nigerian 40%)
+  examScore      Float?         // Exam Score (e.g., Nigerian 60%)
+  britishGrade   String?        // e.g., "A*", "B", or Checkpoint level
+  curriculumType CurriculumType
+  createdAt      DateTime       @default(now())
 }
 
 model Attendance {
-  id         String         @id @default(uuid())
-  studentId  String
-  student    StudentProfile @relation(fields: [studentId], references: [id])
-  date       DateTime       @default(now())
-  isPresent  Boolean        @default(true)
-  term       Term
+  id        String         @id @default(uuid())
+  studentId String
+  student   StudentProfile @relation(fields: [studentId], references: [id])
+  date      DateTime       @default(now())
+  isPresent Boolean        @default(true)
+  term      Term
 }
 
 model FeeRecord {
-  id            String   @id @default(uuid())
-  studentId     String
-  student       StudentProfile @relation(fields: [studentId], references: [id])
-  totalAmount   Float
-  amountPaid    Float    @default(0)
-  term          Term
-  session       String
-  isCleared     Boolean  @default(false)
-  gatewayRef    String?  // Paystack / Flutterwave Reference
+  id          String         @id @default(uuid())
+  studentId   String
+  student     StudentProfile @relation(fields: [studentId], references: [id])
+  totalAmount Float
+  amountPaid  Float          @default(0)
+  term        Term
+  session     String
+  isCleared   Boolean        @default(false)
+  gatewayRef  String?        // Paystack / Flutterwave Reference
 }
