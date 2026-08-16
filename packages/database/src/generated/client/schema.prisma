@@ -1,0 +1,165 @@
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/client"
+}
+
+enum Role {
+  SUPER_ADMIN
+  PRINCIPAL
+  BURSAR
+  TEACHER
+  PARENT
+  STUDENT
+}
+
+enum CurriculumType {
+  NIGERIAN
+  BRITISH
+  HYBRID
+}
+
+enum Term {
+  FIRST_TERM
+  SECOND_TERM
+  THIRD_TERM
+}
+
+model User {
+  id           String          @id @default(uuid())
+  email        String          @unique
+  passwordHash String
+  firstName    String
+  lastName     String
+  role         Role            @default(STUDENT)
+  isActive     Boolean         @default(true)
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+  profile      StudentProfile?
+  staffProfile StaffProfile?
+}
+
+model ClassRoom {
+  id         String           @id @default(uuid())
+  name       String           @unique
+  level      String
+  curriculum CurriculumType   @default(HYBRID)
+  students   StudentProfile[]
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @updatedAt
+}
+
+model StudentProfile {
+  id                String              @id @default(uuid())
+  userId            String              @unique
+  user              User                @relation(fields: [userId], references: [id])
+  admissionNumber   String              @unique
+  curriculum        CurriculumType      @default(HYBRID)
+  classRoomId       String?
+  classRoom         ClassRoom?          @relation(fields: [classRoomId], references: [id])
+  currentClass      String?
+  guardianName      String
+  guardianPhone     String
+  dateOfBirth       DateTime?
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  grades            GradeRecord[]
+  studentGrade      StudentGrade[]
+  attendance        Attendance[]
+  studentAttendance StudentAttendance[]
+  fees              FeeRecord[]
+  feeInvoice        FeeInvoice[]
+  paymentRecord     PaymentRecord[]
+}
+
+model StaffProfile {
+  id         String   @id @default(uuid())
+  userId     String   @unique
+  user       User     @relation(fields: [userId], references: [id])
+  staffId    String   @unique
+  department String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model GradeRecord {
+  id             String         @id @default(uuid())
+  studentId      String
+  student        StudentProfile @relation(fields: [studentId], references: [id])
+  subject        String
+  term           Term
+  session        String
+  caScore        Float?
+  examScore      Float?
+  britishGrade   String?
+  curriculumType CurriculumType
+  createdAt      DateTime       @default(now())
+
+  @@unique([studentId, subject, term, session])
+}
+
+model StudentGrade {
+  id        String         @id @default(uuid())
+  studentId String
+  student   StudentProfile @relation(fields: [studentId], references: [id])
+  subject   String
+  term      Term
+  session   String
+  score     Float
+  createdAt DateTime       @default(now())
+}
+
+model Attendance {
+  id        String         @id @default(uuid())
+  studentId String
+  student   StudentProfile @relation(fields: [studentId], references: [id])
+  date      DateTime       @default(now())
+  isPresent Boolean        @default(true)
+  term      Term
+}
+
+model StudentAttendance {
+  id        String         @id @default(uuid())
+  studentId String
+  student   StudentProfile @relation(fields: [studentId], references: [id])
+  date      DateTime       @default(now())
+  status    String
+  term      Term
+  session   String
+}
+
+model FeeRecord {
+  id          String         @id @default(uuid())
+  studentId   String
+  student     StudentProfile @relation(fields: [studentId], references: [id])
+  totalAmount Float
+  amountPaid  Float          @default(0)
+  term        Term
+  session     String
+  isCleared   Boolean        @default(false)
+  gatewayRef  String?
+}
+
+model FeeInvoice {
+  id        String         @id @default(uuid())
+  studentId String
+  student   StudentProfile @relation(fields: [studentId], references: [id])
+  amount    Float
+  dueDate   DateTime
+  status    String         @default("PENDING")
+  term      Term
+  session   String
+  createdAt DateTime       @default(now())
+}
+
+model PaymentRecord {
+  id        String         @id @default(uuid())
+  studentId String
+  student   StudentProfile @relation(fields: [studentId], references: [id])
+  amount    Float
+  reference String         @unique
+  createdAt DateTime       @default(now())
+}

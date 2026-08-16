@@ -1,6 +1,6 @@
 datasource db {
   provider = "postgresql"
- }
+}
 
 generator client {
   provider = "prisma-client-js"
@@ -42,26 +42,47 @@ model User {
   staffProfile StaffProfile?
 }
 
+model ClassRoom {
+  id          String           @id @default(uuid())
+  name        String           @unique
+  level       String
+  curriculum  CurriculumType   @default(HYBRID)
+  students    StudentProfile[]
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+}
+
 model StudentProfile {
-  id              String         @id @default(uuid())
-  userId          String         @unique
-  user            User           @relation(fields: [userId], references: [id])
-  admissionNumber String         @unique
-  curriculum      CurriculumType @default(HYBRID)
-  currentClass    String         // e.g., "JSS 2" or "Year 8"
-  guardianName    String
-  guardianPhone   String
-  grades          GradeRecord[]
-  attendance      Attendance[]
-  fees            FeeRecord[]
+  id                String              @id @default(uuid())
+  userId            String              @unique
+  user              User                @relation(fields: [userId], references: [id])
+  admissionNumber   String              @unique
+  curriculum        CurriculumType      @default(HYBRID)
+  classRoomId       String?
+  classRoom         ClassRoom?          @relation(fields: [classRoomId], references: [id])
+  currentClass      String?
+  guardianName      String
+  guardianPhone     String
+  dateOfBirth       DateTime?
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  grades            GradeRecord[]
+  studentGrade      StudentGrade[]
+  attendance        Attendance[]
+  studentAttendance StudentAttendance[]
+  fees              FeeRecord[]
+  feeInvoice        FeeInvoice[]
+  paymentRecord     PaymentRecord[]
 }
 
 model StaffProfile {
-  id         String @id @default(uuid())
-  userId     String @unique
-  user       User   @relation(fields: [userId], references: [id])
-  staffId    String @unique
+  id         String   @id @default(uuid())
+  userId     String   @unique
+  user       User     @relation(fields: [userId], references: [id])
+  staffId    String   @unique
   department String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }
 
 model GradeRecord {
@@ -70,12 +91,25 @@ model GradeRecord {
   student        StudentProfile @relation(fields: [studentId], references: [id])
   subject        String
   term           Term
-  session        String         // e.g., "2026/2027"
-  caScore        Float?         // Continuous Assessment (e.g., Nigerian 40%)
-  examScore      Float?         // Exam Score (e.g., Nigerian 60%)
-  britishGrade   String?        // e.g., "A*", "B", or Checkpoint level
+  session        String
+  caScore        Float?
+  examScore      Float?
+  britishGrade   String?
   curriculumType CurriculumType
   createdAt      DateTime       @default(now())
+
+  @@unique([studentId, subject, term, session])
+}
+
+model StudentGrade {
+  id        String         @id @default(uuid())
+  studentId String
+  student   StudentProfile @relation(fields: [studentId], references: [id])
+  subject   String
+  term      Term
+  session   String
+  score     Float
+  createdAt DateTime       @default(now())
 }
 
 model Attendance {
@@ -87,6 +121,16 @@ model Attendance {
   term      Term
 }
 
+model StudentAttendance {
+  id        String         @id @default(uuid())
+  studentId String
+  student   StudentProfile @relation(fields: [studentId], references: [id])
+  date      DateTime       @default(now())
+  status    String
+  term      Term
+  session     String
+}
+
 model FeeRecord {
   id          String         @id @default(uuid())
   studentId   String
@@ -96,5 +140,26 @@ model FeeRecord {
   term        Term
   session     String
   isCleared   Boolean        @default(false)
-  gatewayRef  String?        // Paystack / Flutterwave Reference
+  gatewayRef  String?
+}
+
+model FeeInvoice {
+  id          String         @id @default(uuid())
+  studentId   String
+  student     StudentProfile @relation(fields: [studentId], references: [id])
+  amount      Float
+  dueDate     DateTime
+  status      String         @default("PENDING")
+  term        Term
+  session     String
+  createdAt   DateTime       @default(now())
+}
+
+model PaymentRecord {
+  id        String         @id @default(uuid())
+  studentId String
+  student   StudentProfile @relation(fields: [studentId], references: [id])
+  amount    Float
+  reference String         @unique
+  createdAt DateTime       @default(now())
 }

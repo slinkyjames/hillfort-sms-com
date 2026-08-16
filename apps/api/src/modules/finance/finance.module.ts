@@ -6,8 +6,7 @@ import {
   getStudentFees 
 } from './controllers/finance.controller';
 
-// Add the explicit ': Router' type annotation here
-const router: Router = Router();
+const router = Router();
 
 /**
  * @route   POST /api/finance/invoices
@@ -37,4 +36,4 @@ router.get('/paystack/verify', verifyPayment);
  */
 router.get('/students/:studentId/fees', getStudentFees);
 
-export const financeModule = router;
+export const financeModule: Router = router;
