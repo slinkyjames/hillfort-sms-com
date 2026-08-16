@@ -170,7 +170,7 @@ export const verifyPayment = async (
     }
 
     // Update invoice status and create payment record inside a database transaction
-    const updatedInvoice = await prisma.$transaction(async (tx) => {
+    const updatedInvoice = await prisma.$transaction(async (tx: any) => {
       const invoice = await tx.feeInvoice.update({
         where: { id: invoiceId },
         data: {

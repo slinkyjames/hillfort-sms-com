@@ -1,10 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
 import { HttpException } from './http-exception';
 import { ApiResponse } from '@sms/shared-types';
-import { Prisma } from '@sms/database';
 
 export const globalErrorFilter = (
-  err: Error,
+  err: any,
   req: Request,
   res: Response,
   _next: NextFunction
@@ -19,8 +18,8 @@ export const globalErrorFilter = (
     message = err.message;
     errorDetails = err.errors;
   } 
-  // Handle Prisma Known Request Errors
-  else if (err instanceof Prisma.PrismaClientKnownRequestError) {
+  // Handle Prisma Known Request Errors dynamically
+  else if (err && typeof err.code === 'string' && err.code.startsWith('P')) {
     statusCode = 400;
     switch (err.code) {
       case 'P2002':
@@ -38,16 +37,16 @@ export const globalErrorFilter = (
     }
   } 
   // Handle JWT Verification Errors
-  else if (err.name === 'JsonWebTokenError') {
+  else if (err && err.name === 'JsonWebTokenError') {
     statusCode = 401;
     message = 'Invalid authentication token.';
-  } else if (err.name === 'TokenExpiredError') {
+  } else if (err && err.name === 'TokenExpiredError') {
     statusCode = 401;
     message = 'Authentication token has expired.';
   } 
   // Handle standard Error messages in development
   else if (process.env.NODE_ENV === 'development') {
-    message = err.message;
+    message = err.message || 'An error occurred';
     errorDetails = err.stack;
   }
 
@@ -59,7 +58,7 @@ export const globalErrorFilter = (
   const responsePayload: ApiResponse<null> = {
     status: 'error',
     message,
-    error: errorDetails ? JSON.stringify(errorDetails) : err.name || 'Error',
+    error: errorDetails ? JSON.stringify(errorDetails) : err?.name || 'Error',
   };
 
   res.status(statusCode).json(responsePayload);

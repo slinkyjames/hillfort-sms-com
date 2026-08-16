@@ -73,7 +73,7 @@ export class GradingService {
 
     // 4. Calculate grade metrics, totals, averages, and remarks
     let totalScore = 0;
-    const processedGrades = subjectGrades.map((grade) => {
+    const processedGrades = subjectGrades.map((grade: any) => {
       const caTotal = (grade.ca1 || 0) + (grade.ca2 || 0) + (grade.ca3 || 0);
       const examScore = grade.exam || 0;
       const finalScore = caTotal + examScore;

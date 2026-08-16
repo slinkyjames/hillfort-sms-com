@@ -103,7 +103,7 @@ export class FinanceRepository {
    * Execute an atomic database transaction for verifying and recording payments.
    */
   public async completePaymentTransaction(invoiceId: string, paymentData: CreatePaymentData) {
-    return prisma.$transaction(async (tx) => {
+    return prisma.$transaction(async (tx: any) => {
       const updatedInvoice = await tx.feeInvoice.update({
         where: { id: invoiceId },
         data: { status: 'PAID' },

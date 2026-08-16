@@ -8,7 +8,8 @@
     "dev": "turbo run dev --parallel",
     "lint": "turbo run lint",
     "db:generate": "pnpm --filter @sms/database db:generate",
-    "db:push": "pnpm --filter @sms/database db:push"
+    "db:push": "pnpm --filter @sms/database db:push",
+    "postinstall": "prisma generate --schema=packages/database/prisma/schema.prisma"
   },
   "devDependencies": {
     "turbo": "^2.0.0",
